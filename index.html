@@ -365,7 +365,7 @@ const KB = [
     answer: `<h3>Here's how to get access to the <b>NPD system</b>:</h3>
 <div class="meta-badges">
   <span class="badge"><i class="fas fa-user-tag"></i> Role: New User</span>
-  <span class="badge"><i class="fas fa-desktop"></i> System: One Fiber Portal (Web)</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
 </div>
 <p class="phase-label"><b>For New Users</b></p>
 <div class="steps-wrap">
@@ -379,7 +379,30 @@ const KB = [
     id: "scope_planning",
     topic: "Scope & Planning",
     keywords: ["scope","planning","scope marking","scope definition","link record","planned route","intercity scope","scope release"],
-    answer: `<h3>Here's how <b>Scope & Planning</b> works:</h3>
+    answer: `<h3><b>Scope & Planning</b> — Overview:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: GIS & K2 (Web)</span>
+</div>
+<p>The Scope & Planning phase covers route definition, planning, and release for survey:</p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text"><b>Scope Definition</b> — Sites finalized via CR Portal. Intercity scope marked in GIS with Link ID & Span ID.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text"><b>Route Planning</b> — Plan new routes in GIS using Road Network & Google Maps. Update mandatory attributes.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text"><b>Scope Release</b> — GIS Scheduler pushes records. Links appear on K2 Scope Release page. Release for survey.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text"><b>Notification</b> — State-wise planned route released summary mail sent to all stakeholders.</span></div>
+</div>
+<p style="margin-top:10px"><b>Click a sub-process for detailed steps:</b></p>
+<div class="topic-chips">
+<span class="topic-chip" data-q="Scope Marking & Release">Scope Marking & Release</span>
+<span class="topic-chip" data-q="Route Planning in GIS">Route Planning in GIS</span>
+<span class="topic-chip" data-q="Route Release for Survey">Route Release for Survey</span>
+</div>`
+  },
+  {
+    id: "scope_marking",
+    topic: "Scope Marking & Release",
+    keywords: ["scope marking","scope definition","link record","planned route","scope release","gis scheduler","link record initiated","cr portal"],
+    answer: `<h3>Here's how <b>Scope Marking & Release</b> works:</h3>
 <div class="meta-badges">
   <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
   <span class="badge"><i class="fas fa-desktop"></i> System: GIS (Web)</span>
@@ -456,7 +479,31 @@ const KB = [
     id: "survey",
     topic: "Survey",
     keywords: ["survey","survey process","joint survey","survey release","cpc scope","mdsurvey","survey approval","o&m approval","npe approval","survey span","feature","construction methodology"],
-    answer: `<h3>Here's the complete <b>Survey Process</b>:</h3>
+    answer: `<h3><b>Survey</b> — Overview:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: CPC / InterCity FE / NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
+  <span class="badge"><i class="fas fa-mobile-alt"></i> System: mDSurvey (Mobile)</span>
+</div>
+<p>The Survey phase covers release, field survey, and approval. Key stages:</p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text"><b>Survey Release</b> — CPC releases scope for survey from K2 portal. Mail notification sent.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text"><b>Field Survey</b> — Field user surveys route using mDSurvey app (Construction Methodology, Features, Structures).</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text"><b>O&M Approval</b> — O&M validates survey details on K2 and GIS map. Approves.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text"><b>NPE Approval</b> — NPE reviews survey on K2 (NHQ NPE). Approves. Email notification triggered.</span></div>
+</div>
+<p style="margin-top:10px"><b>Click a sub-process for detailed steps:</b></p>
+<div class="topic-chips">
+<span class="topic-chip" data-q="Survey Release & Field Process">Survey Release & Field Process</span>
+<span class="topic-chip" data-q="Mail Notification for Survey">Mail Notification</span>
+<span class="topic-chip" data-q="Survey Approval from NPE">Survey Approval (NPE)</span>
+</div>`
+  },
+  {
+    id: "survey_full",
+    topic: "Survey Release & Field Process",
+    keywords: ["survey release","field survey","survey process","cpc scope","mdsurvey","survey span","feature","construction methodology","upload survey","o&m approval","npe approval"],
+    answer: `<h3>Here's the complete <b>Survey Release & Field Process</b>:</h3>
 <div class="meta-badges">
   <span class="badge"><i class="fas fa-user-tag"></i> Role: CPC / InterCity FE</span>
   <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
@@ -688,55 +735,138 @@ const KB = [
     id: "boq_soq",
     topic: "BOQ & SOQ",
     keywords: ["boq","soq","bill of quantities","statement of quantities","generate boq","generate soq","capex","estimate capex","finalize capex","capex approval","capex estimation","my task"],
-    answer: `<h3>Here's the <b>BOQ & SOQ</b> generation process:</h3>
+    answer: `<h3><b>BOQ & SOQ</b> — Overview:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: InterCity MPCM / FC&A</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 & GIS (Web)</span>
+</div>
+<p>The BOQ & SOQ phase covers quantity generation and CAPEX approval:</p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text"><b>Generate BOQ</b> — After design release, BOQ task appears in K2 "My Task". Bill of Quantities generated automatically.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text"><b>Generate SOQ</b> — SOQ task appears in K2 "My Task". Statement of Quantities displayed on GIS map.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text"><b>CAPEX Estimation & Approval</b> — Estimate & finalize CAPEX. Approved by State FC&A Lead / Head.</span></div>
+</div>
+<p style="margin-top:10px"><b>Click a sub-process for detailed steps:</b></p>
+<div class="topic-chips">
+<span class="topic-chip" data-q="Generate BOQ">Generate BOQ</span>
+<span class="topic-chip" data-q="Generate SOQ">Generate SOQ</span>
+<span class="topic-chip" data-q="CAPEX Estimation & Approval">CAPEX Estimation & Approval</span>
+</div>`
+  },
+  {
+    id: "generate_boq",
+    topic: "Generate BOQ",
+    keywords: ["generate boq","boq","bill of quantities","my task","design release","boq generation"],
+    answer: `<h3>Here's how to <b>Generate BOQ</b>:</h3>
 <div class="meta-badges">
   <span class="badge"><i class="fas fa-user-tag"></i> Role: InterCity MPCM</span>
   <span class="badge"><i class="fas fa-desktop"></i> System: K2 & GIS (Web)</span>
 </div>
-<p class="phase-label"><b>Step 1 — Generate BOQ</b></p>
 <div class="steps-wrap">
-<div class="step"><span class="step-num">1</span><span class="step-text">After design release, a <b>mail notification</b> is sent. Task appears in <b>"My Task"</b> list on K2.</span></div>
-<div class="step"><span class="step-num">2</span><span class="step-text">Click <b>"Generate BOQ"</b> task. GIS page opens showing the link on map.</span></div>
-<div class="step"><span class="step-num">3</span><span class="step-text"><b>BOQ (Bill of Quantities)</b> is generated automatically.</span></div>
+<div class="step"><span class="step-num">1</span><span class="step-text">After design release, a <b>mail notification</b> is sent to the MPCM.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">The task appears in <b>"My Task"</b> list on K2.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Click <b>"Generate BOQ"</b> task. GIS page opens showing the link on map.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text"><b>BOQ (Bill of Quantities)</b> is generated automatically.</span></div>
+</div>`
+  },
+  {
+    id: "generate_soq",
+    topic: "Generate SOQ",
+    keywords: ["generate soq","soq","statement of quantities","my task","soq generation"],
+    answer: `<h3>Here's how to <b>Generate SOQ</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: InterCity MPCM</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 & GIS (Web)</span>
 </div>
-<p class="phase-label"><b>Step 2 — Generate SOQ</b></p>
 <div class="steps-wrap">
-<div class="step"><span class="step-num">4</span><span class="step-text">Mail notification is sent for SOQ generation. Task appears in <b>"My Task"</b> list.</span></div>
-<div class="step"><span class="step-num">5</span><span class="step-text">Click on the task. GIS map opens with <b>SOQ (Statement of Quantities)</b> details displayed.</span></div>
+<div class="step"><span class="step-num">1</span><span class="step-text">A <b>mail notification</b> is sent for SOQ generation.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">The task appears in <b>"My Task"</b> list on K2.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Click on the task. GIS map opens with <b>SOQ (Statement of Quantities)</b> details displayed.</span></div>
+</div>`
+  },
+  {
+    id: "capex_approval",
+    topic: "CAPEX Estimation & Approval",
+    keywords: ["capex","capex estimation","capex approval","estimate capex","finalize capex","fc&a","capital expenditure"],
+    answer: `<h3>Here's how <b>CAPEX Estimation & Approval</b> works:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: InterCity MPCM / State FC&A Lead</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
 </div>
-<p class="phase-label"><b>Step 3 — CAPEX Estimation & Approval</b></p>
 <div class="steps-wrap">
-<div class="step"><span class="step-num">6</span><span class="step-text">Click <b>"Estimate Capex Limit"</b> task. BOQ, SOQ, and ROW cost for the link are displayed.</span></div>
-<div class="step"><span class="step-num">7</span><span class="step-text">Click <b>"Finalize Capex Task"</b> in My Task list and approve.</span></div>
-</div>
-<div class="note"><b>CAPEX Approval:</b> Finalized by <b>State FC&A Lead / Head</b>.</div>`
+<div class="step"><span class="step-num">1</span><span class="step-text">Click <b>"Estimate Capex Limit"</b> task in K2 My Task list.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">BOQ, SOQ, and ROW cost for the link are displayed.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Click <b>"Finalize Capex Task"</b> in My Task list.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text"><b>State FC&A Lead / Head</b> reviews and approves the CAPEX.</span></div>
+</div>`
   },
   {
     id: "release_construction",
     topic: "Release for Construction",
     keywords: ["release for construction","release construction","design release","initiate construction","cpc release","field engineer","one fiber tile","k2 main tile","intracity","intercity"],
-    answer: `<h3>Here's how to <b>release for construction</b>:</h3>
+    answer: `<h3><b>Release for Construction</b> — Overview:</h3>
 <div class="meta-badges">
   <span class="badge"><i class="fas fa-user-tag"></i> Role: CPC / NPE / InterCity FE</span>
   <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
 </div>
-<p class="phase-label"><b>Part 1 — Design Release</b></p>
+<p>The Release for Construction phase involves three parts:</p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text"><b>Design Release</b> — Release design for construction from K2 main tile.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text"><b>CPC Release</b> — CPC selects links, releases for construction, mails sent to stakeholders.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text"><b>Field Construction Initiation</b> — Initiate construction via One Fiber tile.</span></div>
+</div>
+<p style="margin-top:10px"><b>Click a sub-process for detailed steps:</b></p>
+<div class="topic-chips">
+<span class="topic-chip" data-q="Design Release for Construction">Design Release</span>
+<span class="topic-chip" data-q="CPC Release for Construction">CPC Release</span>
+<span class="topic-chip" data-q="Initiate Construction">Initiate Construction</span>
+</div>`
+  },
+  {
+    id: "design_release_construction",
+    topic: "Design Release for Construction",
+    keywords: ["design release","release design","k2 main tile","intracity","intercity","release for construction"],
+    answer: `<h3>Here's how to do <b>Design Release for Construction</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
+</div>
 <div class="steps-wrap">
 <div class="step"><span class="step-num">1</span><span class="step-text">On K2 main tile, click <b>"Release for Construction"</b>.</span></div>
 <div class="step"><span class="step-num">2</span><span class="step-text">Select <b>Intracity / Intercity</b>. Links available for release will appear.</span></div>
-<div class="step"><span class="step-num">3</span><span class="step-text">Select the link and click <b>Release</b>. A success message is displayed.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Select the link and click <b>Release</b>.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text">A success message is displayed confirming the design release.</span></div>
+</div>`
+  },
+  {
+    id: "cpc_release_construction",
+    topic: "CPC Release for Construction",
+    keywords: ["cpc release","cpc construction","network type","intercity","summary mail","stakeholders"],
+    answer: `<h3>Here's how <b>CPC Release for Construction</b> works:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: CPC</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
 </div>
-<p class="phase-label"><b>Part 2 — CPC Release</b></p>
 <div class="steps-wrap">
-<div class="step"><span class="step-num">4</span><span class="step-text">Select <b>Network Type → Intercity</b> and search for link details.</span></div>
-<div class="step"><span class="step-num">5</span><span class="step-text">Select links and click <b>Release for Construction</b>.</span></div>
-<div class="step"><span class="step-num">6</span><span class="step-text">State-wise and all-state summary mails are sent to stakeholders.</span></div>
+<div class="step"><span class="step-num">1</span><span class="step-text">Select <b>Network Type → Intercity</b> and search for link details.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Select links and click <b>Release for Construction</b>.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">State-wise and all-state <b>summary mails</b> are sent to stakeholders.</span></div>
+</div>`
+  },
+  {
+    id: "initiate_construction",
+    topic: "Initiate Construction",
+    keywords: ["initiate construction","field construction","one fiber tile","construction initiation","start construction"],
+    answer: `<h3>Here's how to <b>Initiate Construction</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: InterCity FE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
 </div>
-<p class="phase-label"><b>Part 3 — Field Construction Initiation</b></p>
 <div class="steps-wrap">
-<div class="step"><span class="step-num">7</span><span class="step-text">Click <b>"Initiate Construction"</b> tab on <b>One Fiber tile</b>.</span></div>
-<div class="step"><span class="step-num">8</span><span class="step-text">Select <b>Network Type → Intercity</b>. Link details will be displayed.</span></div>
-<div class="step"><span class="step-num">9</span><span class="step-text">Select the links and <b>release for construction</b>.</span></div>
+<div class="step"><span class="step-num">1</span><span class="step-text">Click <b>"Initiate Construction"</b> tab on <b>One Fiber tile</b>.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Select <b>Network Type → Intercity</b>.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Link details will be displayed.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text">Select the links and <b>release for construction</b>.</span></div>
 </div>`
   },
   {
