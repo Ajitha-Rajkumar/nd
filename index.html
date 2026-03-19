@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPD ChatBot - Network Planning &amp; Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== Variables ===== */
+        :root {
+            --primary: #1a237e;
+            --primary-light: #3949ab;
+            --accent: #00bcd4;
+            --accent-light: #4dd0e1;
+            --bg: #e8eaf6;
+            --white: #ffffff;
+            --gray-100: #f5f5f5;
+            --gray-200: #eeeeee;
+            --gray-300: #e0e0e0;
+            --gray-600: #757575;
+            --text: #212121;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --radius: 16px;
+            --chat-width: 560px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--white);
+            padding: 14px 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+        .header h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: 0.5px; }
+        .header p { font-size: 0.78rem; opacity: 0.8; margin-top: 2px; }
+        .header i { color: var(--accent); margin-right: 8px; }
+
+        /* ===== Chat Wrapper - centered with blank sides ===== */
+        .chat-wrapper {
+            width: var(--chat-width);
+            max-width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ===== Messages Area ===== */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .chat-messages::-webkit-scrollbar { width: 5px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+
+        /* ===== Message Bubbles ===== */
+        .msg { display: flex; gap: 8px; max-width: 100%; animation: fadeIn 0.3s ease; }
+        .msg.user { flex-direction: row-reverse; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; flex-shrink: 0;
+        }
+        .msg.bot .avatar { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: var(--white); }
+        .msg.user .avatar { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: var(--white); }
+
+        .bubble {
+            padding: 12px 14px;
+            border-radius: var(--radius);
+            font-size: 0.88rem;
+            line-height: 1.55;
+            box-shadow: var(--shadow);
+            max-width: calc(100% - 44px);
+        }
+        .msg.bot .bubble { background: var(--white); border-bottom-left-radius: 4px; }
+        .msg.user .bubble { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: var(--white); border-bottom-right-radius: 4px; }
+
+        .bubble h3 { font-size: 0.95rem; color: var(--primary); margin-bottom: 8px; }
+        .bubble .step { display: flex; gap: 8px; margin: 6px 0; align-items: flex-start; }
+        .bubble .step-num {
+            background: var(--primary); color: var(--white);
+            width: 22px; height: 22px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.72rem; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+        }
+        .bubble .step-text { flex: 1; }
+        .bubble .note {
+            background: #fff3e0; border-left: 3px solid #ff9800;
+            padding: 6px 10px; border-radius: 4px;
+            font-size: 0.82rem; margin-top: 8px; color: #e65100;
+        }
+        .bubble .info-box {
+            background: var(--gray-100); padding: 8px 10px;
+            border-radius: 8px; margin-top: 8px; font-size: 0.82rem;
+        }
+        .bubble .info-box b { color: var(--primary); }
+        .bubble ul { padding-left: 16px; margin: 4px 0; }
+        .bubble li { margin: 3px 0; }
+        .bubble a { color: var(--primary); text-decoration: underline; }
+
+        /* ===== Role/System Badges ===== */
+        .meta-badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 4px 11px; border-radius: 14px; font-size: 0.74rem; font-weight: 600;
+            background: #e8eaf6; color: var(--primary); border: 1.5px solid #c5cae9;
+        }
+        .badge i { font-size: 0.68rem; }
+
+        /* ===== Steps with connecting line ===== */
+        .steps-wrap {
+            position: relative;
+            padding-left: 28px;
+            margin: 6px 0;
+        }
+        .steps-wrap::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 14px;
+            bottom: 14px;
+            width: 2.5px;
+            background: #c5cae9;
+            border-radius: 2px;
+        }
+        .steps-wrap .step {
+            position: relative;
+            display: flex;
+            gap: 10px;
+            margin: 0;
+            padding: 7px 0;
+            align-items: flex-start;
+        }
+        .steps-wrap .step-num {
+            position: absolute;
+            left: -28px;
+            z-index: 1;
+            border: 2.5px solid var(--white);
+            box-shadow: 0 0 0 2px #c5cae9;
+        }
+        .steps-wrap .step-text { flex: 1; }
+        .steps-wrap .phase-label {
+            font-weight: 700; color: var(--primary);
+            padding: 8px 0 2px; font-size: 0.85rem;
+        }
+        .bubble .phase-label {
+            font-weight: 700; color: var(--primary);
+            padding: 8px 0 2px; font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        /* ===== Quick Buttons ===== */
+        .quick-actions {
+            display: flex; flex-wrap: wrap; gap: 6px;
+            padding: 10px 16px;
+            justify-content: center;
+        }
+        .quick-btn {
+            background: var(--white); border: 1px solid var(--gray-300);
+            padding: 7px 14px; border-radius: 20px;
+            font-size: 0.8rem; cursor: pointer; color: var(--primary);
+            transition: all 0.2s ease; display: flex; align-items: center; gap: 5px;
+        }
+        .quick-btn:hover {
+            background: var(--primary); color: var(--white);
+            border-color: var(--primary); transform: translateY(-1px);
+        }
+
+        /* ===== Topic Chips inside messages ===== */
+        .topic-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+        .topic-chip {
+            background: var(--gray-100); border: 1px solid var(--gray-300);
+            padding: 5px 10px; border-radius: 16px; font-size: 0.78rem;
+            cursor: pointer; color: var(--primary); transition: all 0.2s;
+        }
+        .topic-chip:hover { background: var(--primary); color: var(--white); border-color: var(--primary); }
+
+        /* ===== Input Area ===== */
+        .input-area {
+            padding: 10px 16px 14px;
+            background: var(--white);
+            border-top: 1px solid var(--gray-200);
+            width: var(--chat-width);
+            max-width: 100%;
+        }
+        .input-row { display: flex; gap: 8px; }
+        #userInput {
+            flex: 1; padding: 12px 16px;
+            border: 2px solid var(--gray-300); border-radius: 24px;
+            font-size: 0.9rem; outline: none; font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        #userInput:focus { border-color: var(--primary-light); }
+        .btn-send {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--white); border: none; cursor: pointer;
+            font-size: 1rem; display: flex; align-items: center; justify-content: center;
+            transition: transform 0.2s;
+        }
+        .btn-send:hover { transform: scale(1.05); }
+
+        /* ===== Typing ===== */
+        .typing span {
+            display: inline-block; width: 7px; height: 7px;
+            background: var(--gray-600); border-radius: 50%;
+            margin: 0 2px; animation: blink 1.2s infinite;
+        }
+        .typing span:nth-child(2) { animation-delay: 0.2s; }
+        .typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes blink { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 600px) {
+            :root { --chat-width: 100%; }
+            .chat-messages { padding: 12px 10px; }
+            .input-area { padding: 8px 10px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <h1><i class="fas fa-network-wired"></i>NPD ChatBot</h1>
+        <p>Network Planning &amp; Design Assistant</p>
+    </header>
+
+    <!-- Chat Wrapper (centered) -->
+    <div class="chat-wrapper">
+        <div class="chat-messages" id="chatMessages"></div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions" id="quickActions" style="width:var(--chat-width);max-width:100%;">
+        <button class="quick-btn" data-q="Show all topics"><i class="fas fa-th-list"></i> All Topics</button>
+        <button class="quick-btn" data-q="Scope & Planning"><i class="fas fa-map-marked-alt"></i> Scope &amp; Planning</button>
+        <button class="quick-btn" data-q="Survey"><i class="fas fa-clipboard-check"></i> Survey</button>
+        <button class="quick-btn" data-q="Design Automation Tools"><i class="fas fa-tools"></i> Design Automation</button>
+        <button class="quick-btn" data-q="Route Planning in GIS"><i class="fas fa-route"></i> Route Planning</button>
+        <button class="quick-btn" data-q="Initiate Construction"><i class="fas fa-hard-hat"></i> Construction</button>
+    </div>
+
+    <!-- Input -->
+    <div class="input-area">
+        <div class="input-row">
+            <input type="text" id="userInput" placeholder="Ask about NPD processes..." autocomplete="off">
+            <button class="btn-send" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+<script>
+// =====================================================
+// KNOWLEDGE BASE — Step-by-step NPD Process Guide
+// =====================================================
+const KB = [
+  {
+    id: "scope_planning",
+    topic: "Scope & Planning",
+    keywords: ["scope","planning","scope marking","scope definition","link record","planned route","intercity scope","scope release"],
+    answer: `<h3>Here's how <b>Scope & Planning</b> works:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: GIS (Web)</span>
+</div>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Sites are finalized through the <b>CR Portal</b>. The user marks the intercity scope in <b>GIS</b>.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">After planning, <b>Link ID</b>, <b>Span ID</b>, and business attributes are updated based on the intercity scope.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">User team plans new links and releases them in <b>GIS Planning DB</b>.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text"><b>GIS Scheduler</b> checks for new SPAN/Link in Planned_route. If found, it pushes state-wise records in the workflow table. Link status updates to <b>"Link Record Initiated"</b>.</span></div>
+<div class="step"><span class="step-num">5</span><span class="step-text">Links become eligible for scope release and appear on the <b>Scope Release page</b> on the K2 main tile.</span></div>
+<div class="step"><span class="step-num">6</span><span class="step-text">Select the specific link for scope release. Click <b>Release</b>.</span></div>
+<div class="step"><span class="step-num">7</span><span class="step-text">If a link crosses multiple states, a confirmation message is displayed.</span></div>
+<div class="step"><span class="step-num">8</span><span class="step-text">A <b>state-wise planned route released summary mail</b> is sent to all stakeholders.</span></div>
+</div>`
+  },
+  {
+    id: "route_planning",
+    topic: "Route Planning in GIS",
+    keywords: ["route planning","gis","planned route","road network","google map","intracity id","link id","span id","route name"],
+    answer: `<h3>Here's how to <b>plan a route in GIS</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: GIS (Web)</span>
+</div>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Open <b>GIS</b> and navigate to the <b>Planned Route database</b>.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Plan the route using <b>GIS Road Network</b> and <b>Google Maps</b> as references.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Update the mandatory attributes:
+<ul>
+<li><b>Intracity ID</b></li>
+<li><b>Link ID</b></li>
+<li><b>Span ID</b></li>
+<li><b>Route Name</b></li>
+</ul></span></div>
+</div>`
+  },
+  {
+    id: "route_release",
+    topic: "Route Release for Survey",
+    keywords: ["route release","release for survey","one fiber portal","scope release","oneinfra","release scope","network type"],
+    answer: `<h3>Here's how to <b>release a route for survey</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: One Fiber Portal / K2 (Web)</span>
+</div>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Login to <b>One Fiber Portal</b>: <a href="https://osp.jio.com/oneinfra/login" target="_blank">osp.jio.com/oneinfra/login</a></span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Click on <b>"One Fiber Scope Release"</b>.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Select <b>Network Type → Intracity</b>.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text">Select your <b>State</b>.</span></div>
+<div class="step"><span class="step-num">5</span><span class="step-text">All eligible links from planned route will be displayed. Use <b>Quick Search</b> to find your route.</span></div>
+<div class="step"><span class="step-num">6</span><span class="step-text">Verify <b>length</b> and <b>network type</b> carefully. Cross-check with planned route.</span></div>
+<div class="step"><span class="step-num">7</span><span class="step-text">At the bottom, click <b>"Release"</b>. Select the link and release.</span></div>
+</div>
+<div class="note"><b>Important:</b> DO NOT release if details like length do not match with the planned route.</div>`
+  },
+  {
+    id: "mail_notification_survey",
+    topic: "Mail Notification for Survey",
+    keywords: ["mail notification","email notification","survey notification","notification trigger","mdsurvey"],
+    answer: `<h3>Here's how <b>survey mail notifications</b> work:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: InterCity FE / MPCM</span>
+  <span class="badge"><i class="fas fa-mobile-alt"></i> System: mDSurvey (Mobile)</span>
+</div>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Once a link is released for survey, a <b>mail notification</b> is automatically triggered to all relevant users.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">A <b>state-wise planned route released summary mail</b> is also shared.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">The field user carries out the survey using the <b>mDSurvey app</b> (Mobile).</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text">After completing the survey, user submits it for <b>O&M</b> and <b>NPE approval</b>.</span></div>
+</div>`
+  },
+  {
+    id: "survey",
+    topic: "Survey",
+    keywords: ["survey","survey process","joint survey","survey release","cpc scope","mdsurvey","survey approval","o&m approval","npe approval","survey span","feature","construction methodology"],
+    answer: `<h3>Here's the complete <b>Survey Process</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: CPC / InterCity FE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
+  <span class="badge"><i class="fas fa-mobile-alt"></i> System: mDSurvey (Mobile)</span>
+</div>
+<p class="phase-label"><b>Phase 1 — Survey Release (CPC)</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">CPC releases scope for survey from <b>K2 portal</b>.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Summary mails are sent: state-wise and all-state.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Select <b>Network Type → Intercity</b>, search for link details, select link-SPAN and release for survey.</span></div>
+</div>
+<p class="phase-label"><b>Phase 2 — Field Survey (mDSurvey App)</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">4</span><span class="step-text">Login to <b>mDSurvey app</b> and select your role.</span></div>
+<div class="step"><span class="step-num">5</span><span class="step-text">Select <b>Survey Span</b> → Click on span.</span></div>
+<div class="step"><span class="step-num">6</span><span class="step-text">Add features: select <b>Construction Methodology</b>, <b>Construction Type</b>, and <b>Authority</b>.</span></div>
+<div class="step"><span class="step-num">7</span><span class="step-text">Fill structure details: <b>Feature Type</b>, <b>Road Side</b>, <b>Terrain</b>, <b>Crossing Authority</b>.</span></div>
+<div class="step"><span class="step-num">8</span><span class="step-text">Once all features are completed, tick <b>"Upload Survey"</b> and submit.</span></div>
+</div>
+<p class="phase-label"><b>Phase 3 — Approvals</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">9</span><span class="step-text"><b>O&M Approval:</b> On K2 main tile → <b>Review Survey (O&M)</b>. Validate link-SPAN details + survey length on K2 screen. View link on GIS map. Click <b>Approve</b>.</span></div>
+<div class="step"><span class="step-num">10</span><span class="step-text"><b>NPE Approval:</b> On K2 main tile → <b>Review Survey (NHQ NPE)</b>. Validate details and approve.</span></div>
+<div class="step"><span class="step-num">11</span><span class="step-text">Email notification is triggered after both O&M and NPE approval.</span></div>
+</div>`
+  },
+  {
+    id: "survey_approval_npe",
+    topic: "Survey Approval from NPE",
+    keywords: ["survey approval","npe approval","review survey","nhq npe","validate","intracity"],
+    answer: `<h3>Here's how to <b>approve a survey (NPE)</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 & GIS (Web)</span>
+</div>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">On K2 main tile, click <b>"Review Survey (NHQ NPE)"</b>.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Validate the <b>Intracity link details</b> along with <b>survey length</b> on K2 screen.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">View the link on <b>GIS map</b> to verify.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text">Click <b>Approve</b>.</span></div>
+<div class="step"><span class="step-num">5</span><span class="step-text">Email notification is triggered after approval.</span></div>
+</div>`
+  },
+  {
+    id: "design_automation",
+    topic: "Design Automation Tools",
+    keywords: ["design automation","ne design tool","one fiber toolbar","zoom to link","toolbar","network engineer","ne tool","design tool"],
+    answer: `<h3>Here's how to use <b>Design Automation Tools</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: NE (Desktop)</span>
+</div>
+<p style="margin-bottom:6px"><b>Before you start:</b> Verify survey details with planned route and designing parallel lines.</p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text"><b>Add One Fiber Toolbar:</b> In NE, go to <b>Customise</b> option and add the One Fiber toolbar. This is a <b>one-time setup</b> — once added, it stays available like other toolbars.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text"><b>Zoom to Link:</b> Click on <b>"Zoom to Link"</b> tool. Select your <b>Link ID</b>.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Survey-approved routes will be displayed. Use the tool marked in yellow for the design process.</span></div>
+</div>`
+  },
+  {
+    id: "design_initiation",
+    topic: "Design Initiation",
+    keywords: ["design initiation","initiate design","create design","start design","zoom to link","design span"],
+    answer: `<h3>Here's how to <b>initiate a design</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: NE (Desktop)</span>
+</div>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Open <b>Network Engineer (NE)</b> desktop application.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Select the <b>Link ID / Intracity Link ID</b> using the <b>Zoom to Link</b> tool.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Click <b>"Zoom to Link"</b> to initiate design.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text">You can now start designing the Span.</span></div>
+</div>`
+  },
+  {
+    id: "design_custom_tool",
+    topic: "Design Link Using Custom Tool",
+    keywords: ["custom tool","design link","layers","planned route","route walk","overlay","network category"],
+    answer: `<h3>Here's how to <b>design a link using Custom Tool</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: NE (Desktop)</span>
+</div>
+<p style="margin-bottom:6px"><b>Before starting, select these 3 layers:</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text"><b>Planned Route</b> for the designated Span ID.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text"><b>Route Walk Survey</b> layer.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text"><b>Route Walk Structure</b> for proposed structure.</span></div>
+</div>
+<div class="note"><b>Note:</b> The tool works only on a <b>single network category</b>. Overlay portions must be designed manually if existing design is already available.</div>`
+  },
+  {
+    id: "design_rules",
+    topic: "Setting Up Design Rules",
+    keywords: ["design rules","rules","extend","trim","overshoot","undershoot","parallel line","rws lines","linear feature"],
+    answer: `<h3>Here's how to <b>set up Design Rules</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: NE (Desktop)</span>
+</div>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Set up rules for lines required for design (e.g., <b>Extend</b>, <b>Trim</b> for overshoot and undershoot).</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">The linear feature tool will <b>auto-detect errors</b> and correct them.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Click <b>"Get Details"</b>.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text">Click <b>"Create RWS Lines"</b> to create parallel lines.</span></div>
+<div class="step"><span class="step-num">5</span><span class="step-text">Verify in <b>Table of Contents (TOC)</b> — new layers named "Parallel Line" will be created.</span></div>
+</div>`
+  },
+  {
+    id: "network_models",
+    topic: "Selection of Network Models",
+    keywords: ["network models","aerial","ug","underground","cable length","span length","segment","parameters","execution methodology"],
+    answer: `<h3>Here's how to <b>select Network Models</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: NE (Desktop)</span>
+</div>
+<p style="margin-bottom:6px">Models are selected based on survey execution methodology:</p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Default parameters are pre-set for <b>Aerial</b> and <b>UG (Underground)</b> portions.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">User needs to input:
+<ul>
+<li><b>Cable Length</b></li>
+<li><b>Span Length</b></li>
+</ul></span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Models are <b>pre-selected</b> by the tool but can be changed if required.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text">The dropdown will only show models applicable for the selected network type.</span></div>
+</div>`
+  },
+  {
+    id: "design_verification",
+    topic: "Design Verification",
+    keywords: ["verification","verify design","design verification","inputs parameter","survey parameters","re-run"],
+    answer: `<h3>Here's how to <b>verify a design</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: NE (Desktop)</span>
+</div>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Verify the design as per <b>input parameters</b> and <b>survey parameters</b>.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">If any issue is found, <b>re-run the design tool</b> and follow all design steps again.</span></div>
+</div>
+<div class="note"><b>Important:</b> Always verify before updating in NE.</div>`
+  },
+  {
+    id: "design_completion",
+    topic: "Design Completion",
+    keywords: ["design completion","create design","design completed","duct association","manhole","pole","wo transition","ne validation","boundary attributes"],
+    answer: `<h3>Here's how to <b>complete a design</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: NE (Desktop)</span>
+</div>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Click <b>"Create Design"</b>.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">A <b>"Design Completed"</b> message will appear.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Design is now updated to the selected work order in NE.</span></div>
+</div>
+<p class="phase-label"><b>Manual steps after completion:</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">4</span><span class="step-text"><b>Duct association</b> with transmedia — must be done manually.</span></div>
+<div class="step"><span class="step-num">5</span><span class="step-text">Replace existing <b>Manhole</b> (use MH-Dummy model) and <b>Pole</b> (use Tstruct) manually.</span></div>
+<div class="step"><span class="step-num">6</span><span class="step-text">Run <b>NE Custom Tools</b> to update boundary attributes and NE IDs for structures.</span></div>
+<div class="step"><span class="step-num">7</span><span class="step-text">Run <b>NE Validation</b> before WO transition.</span></div>
+</div>`
+  },
+  {
+    id: "trace_tool",
+    topic: "Trace Tool for Design",
+    keywords: ["trace tool","trace","boq","soq","network element","work order","start structure","end structure"],
+    answer: `<h3>Here's how to use the <b>Trace Tool</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: NE (Desktop)</span>
+</div>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Run the <b>Trace Tool</b> for selection of network elements in the work order.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Select the <b>Start Structure</b> and <b>End Structure</b> for trace.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">The Trace Tool will <b>validate network inventory</b> and send it for <b>BOQ</b> and <b>SOQ</b> generation.</span></div>
+</div>`
+  },
+  {
+    id: "span_link_design",
+    topic: "Span / Link Design in Network Engineer",
+    keywords: ["span design","link design","network engineer","ready to release","design available"],
+    answer: `<h3>Here's the <b>Span / Link Design</b> status:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: NE (Desktop)</span>
+</div>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Once design is completed, the design is available in <b>Network Engineer</b>.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">The design is now <b>ready to release for construction</b>.</span></div>
+</div>`
+  },
+  {
+    id: "design_release",
+    topic: "Design Release for Construction",
+    keywords: ["design release","release for construction","release construction","k2 main tile","intracity","workorder"],
+    answer: `<h3>Here's how to <b>release a design for construction</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
+</div>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">On K2 main tile, click <b>"Release for Construction"</b>.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Select <b>Intracity</b>. Links available for release will appear in dropdown.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Select the link and click <b>Release</b>.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text">A <b>success message</b> will be displayed after link release.</span></div>
+<div class="step"><span class="step-num">5</span><span class="step-text">Work order for design is now in process.</span></div>
+</div>`
+  },
+  {
+    id: "design_to_rfc",
+    topic: "Design to RFC (Manual Design)",
+    keywords: ["design to rfc","rfc","manual design","boq","soq","capex","generate boq","generate soq","estimate capex","finalize capex","capex approval","capex estimation"],
+    answer: `<h3>Here's the <b>Design to RFC</b> process:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: InterCity MPCM / State FC&A</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 & GIS (Web)</span>
+</div>
+<p class="phase-label"><b>Step A — Release for Construction</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Click <b>"Release for Construction"</b> on K2 main tile. Select Intercity link and release.</span></div>
+</div>
+<p class="phase-label"><b>Step B — Generate BOQ</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">2</span><span class="step-text">Mail notification is sent. Task appears in <b>"My Task"</b> list.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Click <b>"Generate BOQ"</b> task. GIS page opens showing the link on map. BOQ is generated.</span></div>
+</div>
+<p class="phase-label"><b>Step C — Generate SOQ</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">4</span><span class="step-text">Mail notification is sent for SOQ generation. Task appears in <b>"My Task"</b> list.</span></div>
+<div class="step"><span class="step-num">5</span><span class="step-text">Click on the task. GIS map opens with <b>SOQ details</b> displayed on screen.</span></div>
+</div>
+<p class="phase-label"><b>Step D — CAPEX Estimation</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">6</span><span class="step-text">Click <b>"Estimate Capex Limit"</b> task. BOQ, SOQ, and ROW cost for the link are displayed.</span></div>
+</div>
+<p class="phase-label"><b>Step E — Finalize CAPEX</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">7</span><span class="step-text">Click <b>"Finalize Capex Task"</b> in My Task list and approve.</span></div>
+</div>`
+  },
+  {
+    id: "initiate_construction",
+    topic: "Initiate Construction",
+    keywords: ["initiate construction","construction","release for construction","cpc release","field engineer","one fiber tile"],
+    answer: `<h3>Here's how to <b>initiate construction</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: CPC / InterCity FE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
+</div>
+<p class="phase-label"><b>Part 1 — CPC Release for Construction</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Click <b>"Release for Construction"</b> tab on K2 main tile.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Select <b>Network Type → Intercity</b> and search for link details.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Select links and click <b>Release for Construction</b>.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text">State-wise and all-state summary mails are sent.</span></div>
+</div>
+<p class="phase-label"><b>Part 2 — Field Construction Initiation</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">5</span><span class="step-text">Click <b>"Initiate Construction"</b> tab on <b>One Fiber tile</b>.</span></div>
+<div class="step"><span class="step-num">6</span><span class="step-text">Select <b>Network Type → Intercity</b>. Link details will be displayed.</span></div>
+<div class="step"><span class="step-num">7</span><span class="step-text">Select the links and <b>release for construction</b>.</span></div>
+</div>`
+  }
+];
+
+// =====================================================
+// CHATBOT LOGIC
+// =====================================================
+const chatMessages = document.getElementById('chatMessages');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const quickActions = document.getElementById('quickActions');
+
+// Welcome
+addBot(`<h3>Welcome to NPD ChatBot!</h3>
+<p>The <b>NPD (Network Planning & Design)</b> is a workflow module in the <b>JIO Infra Build</b> platform that enables planning, designing, and releasing fiber optic network routes for construction across PAN India.</p>
+<p style="margin-top:8px">The application integrates with <b>K2 workflow engine</b> for task management & approvals, <b>GIS</b> (Geographic Information System) for route planning & scope marking, <b>Network Engineer (NE)</b> for design automation, and <b>mDSurvey</b> mobile app for field surveys.</p>
+<p style="margin-top:8px">This chatbot serves as a dedicated assistant, offering a <b>step-by-step guide</b> through the entire NPD lifecycle, including:</p>
+<ul>
+<li>Scope Definition & Route Planning</li>
+<li>Route Release & Field Survey</li>
+<li>Design Creation & Verification</li>
+<li>BOQ, SOQ & CAPEX Processing</li>
+<li>Construction Initiation</li>
+</ul>
+<p style="margin-top:8px">Click a button below or type your question to get started.</p>`);
+
+// Events
+sendBtn.addEventListener('click', send);
+userInput.addEventListener('keypress', e => { if (e.key === 'Enter') send(); });
+document.querySelectorAll('.quick-btn').forEach(b => {
+    b.addEventListener('click', () => { userInput.value = b.dataset.q; send(); });
+});
+
+function send() {
+    const q = userInput.value.trim();
+    if (!q) return;
+    addUser(q);
+    userInput.value = '';
+    quickActions.style.display = 'none';
+
+    const tid = showTyping();
+    setTimeout(() => {
+        removeEl(tid);
+        addBot(getAnswer(q));
+        scrollDown();
+    }, 350 + Math.random() * 300);
+}
+
+function addUser(text) {
+    const d = document.createElement('div');
+    d.className = 'msg user';
+    d.innerHTML = `<div class="avatar"><i class="fas fa-user"></i></div><div class="bubble">${esc(text)}</div>`;
+    chatMessages.appendChild(d);
+    scrollDown();
+}
+
+function addBot(html) {
+    const d = document.createElement('div');
+    d.className = 'msg bot';
+    d.innerHTML = `<div class="avatar"><i class="fas fa-robot"></i></div><div class="bubble">${html}</div>`;
+    chatMessages.appendChild(d);
+    d.querySelectorAll('.topic-chip').forEach(c => {
+        c.addEventListener('click', () => { userInput.value = c.dataset.q; send(); });
+    });
+    scrollDown();
+}
+
+function showTyping() {
+    const id = 't' + Date.now();
+    const d = document.createElement('div');
+    d.className = 'msg bot'; d.id = id;
+    d.innerHTML = `<div class="avatar"><i class="fas fa-robot"></i></div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
+    chatMessages.appendChild(d);
+    scrollDown();
+    return id;
+}
+
+function removeEl(id) { const el = document.getElementById(id); if (el) el.remove(); }
+function scrollDown() { chatMessages.scrollTop = chatMessages.scrollHeight; }
+function esc(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+// =====================================================
+// ANSWER ENGINE
+// =====================================================
+function getAnswer(query) {
+    const q = query.toLowerCase().trim();
+
+    // Greetings
+    if (/^(hi|hello|hey|good\s*(morning|afternoon|evening))/i.test(q)) {
+        return `<p>Hello! How can I help you with NPD today? You can ask me about any process like Scope & Planning, Survey, Design, or Construction.</p>`;
+    }
+    // Thanks
+    if (/^(thanks?|thank\s*you|thx)/i.test(q)) {
+        return `<p>You're welcome! Feel free to ask if you need anything else.</p>`;
+    }
+    // Help
+    if (/^(help|what can you do)/i.test(q)) {
+        return `<h3>How to Use</h3>
+<ul>
+<li>Ask about any NPD process (e.g., "How does survey work?")</li>
+<li>Click the quick buttons for common topics</li>
+<li>Type "all topics" to see everything I know</li>
+</ul>`;
+    }
+    // All topics
+    if (/all\s*topics?|show\s*topics?|list\s*topics?|browse/i.test(q)) {
+        const chips = KB.map(k => `<span class="topic-chip" data-q="${esc(k.topic)}">${esc(k.topic)}</span>`).join('');
+        return `<h3>All NPD Topics (${KB.length})</h3><p>Click any topic:</p><div class="topic-chips">${chips}</div>`;
+    }
+
+    // Search KB
+    const results = searchKB(q);
+
+    if (results.length === 0) {
+        const suggestions = KB.slice(0, 6).map(k => `<span class="topic-chip" data-q="${esc(k.topic)}">${esc(k.topic)}</span>`).join('');
+        return `<p>I couldn't find a match for "<b>${esc(query)}</b>". Try one of these topics:</p><div class="topic-chips">${suggestions}</div>`;
+    }
+
+    let html = results[0].answer;
+
+    if (results.length > 1) {
+        const chips = results.slice(1, 5).map(r => `<span class="topic-chip" data-q="${esc(r.topic)}">${esc(r.topic)}</span>`).join('');
+        html += `<p style="margin-top:10px"><b>Related topics:</b></p><div class="topic-chips">${chips}</div>`;
+    }
+
+    return html;
+}
+
+function searchKB(query) {
+    const q = query.toLowerCase().replace(/[^\w\s&]/g, ' ');
+    const words = q.split(/\s+/).filter(w => w.length > 1);
+
+    const stop = new Set(['the','and','for','are','but','not','you','all','can','has','have','been','will','with','what','when','where','which','who','how','this','that','from','they','about','would','there','their','tell','explain','describe','show','give','please','could','does','mean','also','than','then','just','like','more','some','such','only','other','very','each','know','about','into','me']);
+    const terms = words.filter(w => !stop.has(w));
+    const search = terms.length > 0 ? terms : words;
+
+    const scored = KB.map(entry => {
+        let score = 0;
+        const topicL = entry.topic.toLowerCase();
+        const kws = entry.keywords;
+
+        // Exact topic match
+        if (topicL === q) score += 100;
+        if (topicL.includes(q)) score += 50;
+        if (q.includes(topicL) && topicL.length > 3) score += 40;
+
+        search.forEach(t => {
+            if (topicL.includes(t)) score += 25;
+            if (kws.some(k => k.includes(t) || t.includes(k))) score += 15;
+        });
+
+        // Bigram similarity
+        score += bigramSim(q, topicL) * 12;
+
+        return { ...entry, score };
+    });
+
+    return scored.filter(s => s.score > 8).sort((a, b) => b.score - a.score);
+}
+
+function bigramSim(a, b) {
+    const bg = s => { const r = new Set(); for (let i = 0; i < s.length - 1; i++) r.add(s.substr(i, 2)); return r; };
+    const ba = bg(a), bb = bg(b);
+    let n = 0; ba.forEach(x => { if (bb.has(x)) n++; });
+    const total = ba.size + bb.size;
+    return total === 0 ? 0 : (2 * n) / total;
+}
+</script>
+</body>
+</html>

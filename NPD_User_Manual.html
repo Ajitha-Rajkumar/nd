@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPD User Manual — Network Planning &amp; Design</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #1a237e;
+            --primary-light: #3949ab;
+            --accent: #00bcd4;
+            --accent-bg: #e0f7fa;
+            --warn: #ff9800;
+            --warn-bg: #fff3e0;
+            --danger: #d32f2f;
+            --danger-bg: #ffebee;
+            --success: #2e7d32;
+            --success-bg: #e8f5e9;
+            --bg: #f8f9fb;
+            --white: #ffffff;
+            --gray-100: #f5f5f5;
+            --gray-200: #eeeeee;
+            --gray-300: #e0e0e0;
+            --gray-600: #757575;
+            --text: #212121;
+            --text-light: #555555;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* ===== Cover Page ===== */
+        .cover {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 60%, var(--accent) 100%);
+            color: var(--white);
+            text-align: center;
+            padding: 80px 30px;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .cover-icon { font-size: 4rem; margin-bottom: 20px; opacity: 0.9; }
+        .cover h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 10px; }
+        .cover h2 { font-size: 1.3rem; font-weight: 400; opacity: 0.85; margin-bottom: 30px; }
+        .cover .badge {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 24px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+        }
+
+        /* ===== Sidebar TOC ===== */
+        .layout { display: flex; max-width: 1100px; margin: 0 auto; }
+        .sidebar {
+            width: 280px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            background: var(--white);
+            border-right: 1px solid var(--gray-200);
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+        .sidebar h3 {
+            padding: 0 20px 12px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-600);
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 8px;
+        }
+        .sidebar a {
+            display: block;
+            padding: 8px 20px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.88rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: var(--gray-100);
+            color: var(--primary);
+            border-left-color: var(--accent);
+        }
+        .sidebar a.section-head {
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* ===== Main Content ===== */
+        .content {
+            flex: 1;
+            padding: 40px 50px;
+            max-width: 820px;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 50px;
+            scroll-margin-top: 20px;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary);
+        }
+        .section-num {
+            background: var(--primary);
+            color: var(--white);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; font-weight: 700; flex-shrink: 0;
+        }
+        .section-header h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        /* Sub-sections */
+        .subsection {
+            margin: 30px 0;
+            scroll-margin-top: 20px;
+        }
+        .subsection h3 {
+            font-size: 1.15rem;
+            color: var(--primary-light);
+            margin-bottom: 12px;
+            padding-left: 12px;
+            border-left: 3px solid var(--accent);
+        }
+
+        /* Steps */
+        .steps { margin: 15px 0; }
+        .step {
+            display: flex;
+            gap: 12px;
+            margin: 10px 0;
+            align-items: flex-start;
+        }
+        .step-num {
+            background: var(--primary);
+            color: var(--white);
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.78rem; font-weight: 700; flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .step-text { flex: 1; }
+        .step-text b { color: var(--primary); }
+
+        /* Info boxes */
+        .info-box {
+            background: var(--accent-bg);
+            border-left: 4px solid var(--accent);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+        .info-box b { color: var(--primary); }
+
+        .warn-box {
+            background: var(--warn-bg);
+            border-left: 4px solid var(--warn);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 12px 0;
+            font-size: 0.9rem;
+            color: #e65100;
+        }
+
+        .danger-box {
+            background: var(--danger-bg);
+            border-left: 4px solid var(--danger);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 12px 0;
+            font-size: 0.9rem;
+            color: var(--danger);
+        }
+
+        .success-box {
+            background: var(--success-bg);
+            border-left: 4px solid var(--success);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 12px 0;
+            font-size: 0.9rem;
+            color: var(--success);
+        }
+
+        /* Role table */
+        .role-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 0.88rem;
+        }
+        .role-table th {
+            background: var(--primary);
+            color: var(--white);
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .role-table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .role-table tr:nth-child(even) td { background: var(--gray-100); }
+
+        /* Misc */
+        p { margin: 8px 0; }
+        ul { padding-left: 20px; margin: 8px 0; }
+        li { margin: 4px 0; }
+        a { color: var(--primary); }
+        .url-box {
+            background: var(--gray-100);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin: 8px 0;
+            display: inline-block;
+        }
+        .phase-label {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--white);
+            padding: 4px 14px;
+            border-radius: 15px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin: 15px 0 8px;
+        }
+        .divider {
+            border: none;
+            border-top: 1px dashed var(--gray-300);
+            margin: 25px 0;
+        }
+
+        /* Print */
+        @media print {
+            .sidebar { display: none; }
+            .cover { min-height: auto; padding: 40px; }
+            .content { padding: 20px; }
+            .layout { display: block; }
+            body { font-size: 12px; }
+        }
+
+        /* Mobile */
+        @media (max-width: 800px) {
+            .sidebar { display: none; }
+            .content { padding: 20px; }
+            .cover h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== COVER ===== -->
+<div class="cover">
+    <div class="cover-icon">&#128225;</div>
+    <h1>Network Planning &amp; Design</h1>
+    <h2>Step-by-Step User Manual for Field Users</h2>
+    <div class="badge">One Fiber — NPD Workflow Guide</div>
+</div>
+
+<!-- ===== LAYOUT ===== -->
+<div class="layout">
+
+<!-- Sidebar -->
+<nav class="sidebar">
+    <h3>Contents</h3>
+    <a href="#overview" class="section-head">Overview</a>
+    <a href="#sec1" class="section-head">1. Scope &amp; Planning</a>
+    <a href="#s1-route-planning">&nbsp;&nbsp;&nbsp; Route Planning in GIS</a>
+    <a href="#s1-scope-release">&nbsp;&nbsp;&nbsp; Scope Release</a>
+    <a href="#sec2" class="section-head">2. Route Release for Survey</a>
+    <a href="#sec3" class="section-head">3. Survey</a>
+    <a href="#s3-survey-release">&nbsp;&nbsp;&nbsp; Survey Release (CPC)</a>
+    <a href="#s3-field-survey">&nbsp;&nbsp;&nbsp; Field Survey (mDSurvey)</a>
+    <a href="#s3-om-approval">&nbsp;&nbsp;&nbsp; O&amp;M Approval</a>
+    <a href="#s3-npe-approval">&nbsp;&nbsp;&nbsp; NPE Approval</a>
+    <a href="#sec4" class="section-head">4. Design</a>
+    <a href="#s4-automation">&nbsp;&nbsp;&nbsp; Design Automation Tools</a>
+    <a href="#s4-initiation">&nbsp;&nbsp;&nbsp; Design Initiation</a>
+    <a href="#s4-custom-tool">&nbsp;&nbsp;&nbsp; Design Using Custom Tool</a>
+    <a href="#s4-rules">&nbsp;&nbsp;&nbsp; Setting Up Design Rules</a>
+    <a href="#s4-network-models">&nbsp;&nbsp;&nbsp; Network Model Selection</a>
+    <a href="#s4-verification">&nbsp;&nbsp;&nbsp; Design Verification</a>
+    <a href="#s4-completion">&nbsp;&nbsp;&nbsp; Design Completion</a>
+    <a href="#s4-trace">&nbsp;&nbsp;&nbsp; Trace Tool</a>
+    <a href="#sec5" class="section-head">5. Design Release</a>
+    <a href="#sec6" class="section-head">6. Design to RFC</a>
+    <a href="#s6-boq">&nbsp;&nbsp;&nbsp; Generate BOQ</a>
+    <a href="#s6-soq">&nbsp;&nbsp;&nbsp; Generate SOQ</a>
+    <a href="#s6-capex">&nbsp;&nbsp;&nbsp; CAPEX Estimation</a>
+    <a href="#s6-finalize">&nbsp;&nbsp;&nbsp; Finalize CAPEX</a>
+    <a href="#sec7" class="section-head">7. Initiate Construction</a>
+</nav>
+
+<!-- Main Content -->
+<main class="content">
+
+<!-- ===== OVERVIEW ===== -->
+<div class="section" id="overview">
+    <div class="section-header">
+        <div class="section-num">&#9432;</div>
+        <h2>Overview</h2>
+    </div>
+
+    <p>This manual guides field users through the complete <b>Network Planning &amp; Design (NPD)</b> workflow in the <b>One Fiber</b> system. The workflow covers 7 major phases from initial scope definition to construction initiation.</p>
+
+    <div class="info-box">
+        <b>End-to-End Workflow:</b><br>
+        Scope &amp; Planning → Route Release → Survey → Design → Design Release → Design to RFC (BOQ / SOQ / CAPEX) → Initiate Construction
+    </div>
+
+    <h3 style="margin-top:20px; color:var(--primary)">Systems Used</h3>
+    <table class="role-table">
+        <tr><th>System</th><th>Type</th><th>Used For</th></tr>
+        <tr><td><b>GIS</b></td><td>Web / Desktop</td><td>Route planning, scope marking, survey, design</td></tr>
+        <tr><td><b>K2 Portal</b></td><td>Web</td><td>Workflow tasks, approvals, scope release</td></tr>
+        <tr><td><b>One Fiber Portal</b></td><td>Web</td><td>Scope release, route release</td></tr>
+        <tr><td><b>Network Engineer (NE)</b></td><td>Desktop</td><td>Design creation, trace tool</td></tr>
+        <tr><td><b>mDSurvey App</b></td><td>Mobile</td><td>Field survey data collection</td></tr>
+    </table>
+
+    <h3 style="margin-top:20px; color:var(--primary)">Key Roles</h3>
+    <table class="role-table">
+        <tr><th>Role</th><th>Location</th><th>Responsibilities</th></tr>
+        <tr><td><b>NPE</b></td><td>NHQ / SHQ</td><td>Planning, scope release, design, approvals</td></tr>
+        <tr><td><b>CPC</b></td><td>NHQ</td><td>Survey release, construction release</td></tr>
+        <tr><td><b>RF</b></td><td>SHQ / NHQ</td><td>State-wise scope definition</td></tr>
+        <tr><td><b>InterCity FE / MPCM</b></td><td>Maintenance Point</td><td>Field survey, BOQ/SOQ generation</td></tr>
+        <tr><td><b>MP O&amp;M</b></td><td>Maintenance Point</td><td>Survey verification &amp; approval</td></tr>
+        <tr><td><b>State ROW Executive</b></td><td>SHQ</td><td>Passive survey</td></tr>
+        <tr><td><b>State FC&amp;A Lead/Head</b></td><td>SHQ</td><td>CAPEX approval</td></tr>
+        <tr><td><b>InterCity Field Engineer</b></td><td>Maintenance Point</td><td>Construction initiation</td></tr>
+    </table>
+</div>
+
+<!-- ===== SECTION 1: SCOPE & PLANNING ===== -->
+<div class="section" id="sec1">
+    <div class="section-header">
+        <div class="section-num">1</div>
+        <h2>Scope &amp; Planning</h2>
+    </div>
+
+    <p>This is the first phase where intercity scope is defined and routes are planned in GIS.</p>
+
+    <table class="role-table">
+        <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+        <tr><td>Jio State-wise Scope Definition</td><td>GIS (Web)</td><td>RF</td><td>SHQ / NHQ</td></tr>
+        <tr><td>InterCity Scope Marking</td><td>GIS (Web)</td><td>NPE</td><td>NHQ</td></tr>
+        <tr><td>InterCity Route Planning</td><td>GIS (Web)</td><td>NPE</td><td>NHQ</td></tr>
+        <tr><td>InterCity Scope Release</td><td>K2, GIS (Web)</td><td>NPE</td><td>NHQ</td></tr>
+    </table>
+
+    <!-- Route Planning -->
+    <div class="subsection" id="s1-route-planning">
+        <h3>Route Planning in GIS</h3>
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">Once sites are finalized through the <b>CR Portal</b>, the user marks the <b>intercity scope</b> in GIS.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">Open <b>GIS</b> and navigate to the <b>Planned Route database</b>.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text">Plan the route using <b>GIS Road Network</b> and <b>Google Maps</b> as references.</span></div>
+            <div class="step"><span class="step-num">4</span><span class="step-text">Update the mandatory attributes:
+                <ul>
+                    <li><b>Intracity ID</b></li>
+                    <li><b>Link ID</b></li>
+                    <li><b>Span ID</b></li>
+                    <li><b>Route Name</b></li>
+                </ul>
+            </span></div>
+            <div class="step"><span class="step-num">5</span><span class="step-text">After planning, <b>Link ID</b>, <b>Span ID</b>, and business attributes are updated based on the intercity scope.</span></div>
+            <div class="step"><span class="step-num">6</span><span class="step-text">User team plans new links and releases them in <b>GIS Planning DB</b>.</span></div>
+        </div>
+
+        <div class="info-box">
+            <b>What happens next:</b> GIS Scheduler automatically checks for new SPAN/Link in Planned_route. If found, it pushes state-wise records in the workflow table. The Link status updates to <b>"Link Record Initiated"</b>.
+        </div>
+    </div>
+
+    <!-- Scope Release -->
+    <div class="subsection" id="s1-scope-release">
+        <h3>Scope Release</h3>
+        <p>Once links have status "Link Record Initiated", they become eligible for scope release.</p>
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">Links appear on the <b>Scope Release page</b> on the K2 main tile.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">Select the specific <b>link</b> for which scope needs to be released.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text">Click <b>"Release"</b>.</span></div>
+            <div class="step"><span class="step-num">4</span><span class="step-text">If a link crosses multiple states, a <b>confirmation message</b> will be displayed on screen.</span></div>
+            <div class="step"><span class="step-num">5</span><span class="step-text">A <b>state-wise planned route released summary mail</b> is sent to all stakeholders.</span></div>
+            <div class="step"><span class="step-num">6</span><span class="step-text">An <b>all-states summary mail</b> is also sent.</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== SECTION 2: ROUTE RELEASE FOR SURVEY ===== -->
+<div class="section" id="sec2">
+    <div class="section-header">
+        <div class="section-num">2</div>
+        <h2>Route Release for Survey</h2>
+    </div>
+
+    <p>After scope release, routes need to be released for survey through the One Fiber Portal.</p>
+
+    <div class="steps">
+        <div class="step"><span class="step-num">1</span><span class="step-text">Login to <b>One Fiber Portal</b>:<br>
+            <span class="url-box">https://osp.jio.com/oneinfra/login</span>
+        </span></div>
+        <div class="step"><span class="step-num">2</span><span class="step-text">Click on <b>"One Fiber Scope Release"</b>.</span></div>
+        <div class="step"><span class="step-num">3</span><span class="step-text">Select <b>Network Type → Intracity</b>.</span></div>
+        <div class="step"><span class="step-num">4</span><span class="step-text">Select your <b>State</b>.</span></div>
+        <div class="step"><span class="step-num">5</span><span class="step-text">All eligible links from the planned route will be displayed.</span></div>
+        <div class="step"><span class="step-num">6</span><span class="step-text">Click on <b>Quick Search</b> (marked in red) and enter your route details.</span></div>
+        <div class="step"><span class="step-num">7</span><span class="step-text">Carefully verify:
+            <ul>
+                <li><b>Length</b> — must match the planned route</li>
+                <li><b>Network Type</b> — must be correct</li>
+                <li><b>All other details</b> — cross-check with planned route</li>
+            </ul>
+        </span></div>
+        <div class="step"><span class="step-num">8</span><span class="step-text">At the bottom of the page, click <b>"Release"</b>. Select the link and release it.</span></div>
+    </div>
+
+    <div class="danger-box">
+        <b>&#9888; IMPORTANT:</b> DO NOT release if details like length do not match with the planned route. Always cross-check before releasing.
+    </div>
+
+    <div class="info-box">
+        <b>After release:</b> A mail notification is automatically triggered to all relevant users. A state-wise planned route released summary mail is also shared.
+    </div>
+</div>
+
+<!-- ===== SECTION 3: SURVEY ===== -->
+<div class="section" id="sec3">
+    <div class="section-header">
+        <div class="section-num">3</div>
+        <h2>Survey</h2>
+    </div>
+
+    <p>The survey phase involves releasing scope for survey, conducting field survey, and obtaining approvals from O&amp;M and NPE.</p>
+
+    <!-- Survey Release -->
+    <div class="subsection" id="s3-survey-release">
+        <h3>3.1 Survey Release (CPC)</h3>
+
+        <table class="role-table">
+            <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+            <tr><td>CPC Scope Release For Survey</td><td>K2, GIS (Web)</td><td>CPC</td><td>NHQ</td></tr>
+        </table>
+
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">CPC releases the scope for survey from the <b>K2 Portal</b>.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">Select <b>Network Type → Intercity</b> and search for link details.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text">Select the link to be released for survey.</span></div>
+            <div class="step"><span class="step-num">4</span><span class="step-text">A confirmation message is displayed once link-SPAN is released for survey.</span></div>
+            <div class="step"><span class="step-num">5</span><span class="step-text">Mail notification is triggered to users once the link is released.</span></div>
+        </div>
+
+        <div class="info-box">
+            <b>Summary mails:</b> State-wise scope released for survey summary mail and all-state summary mail are automatically sent.
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Field Survey -->
+    <div class="subsection" id="s3-field-survey">
+        <h3>3.2 Field Survey (mDSurvey App)</h3>
+
+        <table class="role-table">
+            <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+            <tr><td>InterCity Joint Survey</td><td>GIS (Mobile)</td><td>InterCity FE / MPCM</td><td>Maintenance Point</td></tr>
+            <tr><td>InterCity Joint Survey (Passive)</td><td>GIS (Mobile)</td><td>State ROW Executive</td><td>SHQ</td></tr>
+        </table>
+
+        <p>All scope-released links will be eligible for survey.</p>
+
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text"><b>Login</b> to the <b>mDSurvey app</b> on your mobile device.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">Select your <b>User Role</b>.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text">Select the <b>Survey Span</b>.</span></div>
+            <div class="step"><span class="step-num">4</span><span class="step-text"><b>Click on the Span</b> to open it.</span></div>
+            <div class="step"><span class="step-num">5</span><span class="step-text"><b>Add Features:</b> Select a feature to add from the list. You can also view or edit features you've already added.</span></div>
+            <div class="step"><span class="step-num">6</span><span class="step-text">For each feature, fill in:
+                <ul>
+                    <li><b>Construction Methodology</b></li>
+                    <li><b>Construction Type</b></li>
+                    <li><b>Authority</b></li>
+                </ul>
+            </span></div>
+            <div class="step"><span class="step-num">7</span><span class="step-text">Fill in the <b>Structure details</b>:
+                <ul>
+                    <li><b>Feature Type</b> &amp; <b>Road Side</b></li>
+                    <li><b>Authority Type</b> (for crossings)</li>
+                    <li><b>Terrain</b> &amp; <b>Type</b> (for structures)</li>
+                    <li>Select <b>"OR Existing"</b> if applicable</li>
+                </ul>
+            </span></div>
+            <div class="step"><span class="step-num">8</span><span class="step-text">Each feature will show status as <b>"In Progress"</b> or <b>"Completed"</b>.</span></div>
+            <div class="step"><span class="step-num">9</span><span class="step-text">Once all features are completed, tick the checkbox <b>"Upload Survey"</b>.</span></div>
+            <div class="step"><span class="step-num">10</span><span class="step-text">Click <b>Upload</b> to submit the survey for approval.</span></div>
+        </div>
+
+        <div class="success-box">
+            <b>After upload:</b> State-wise survey completed summary mail is sent. The survey is now pending O&amp;M and NPE approval.
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- O&M Approval -->
+    <div class="subsection" id="s3-om-approval">
+        <h3>3.3 Survey Approval from O&amp;M</h3>
+
+        <table class="role-table">
+            <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+            <tr><td>InterCity Joint Survey - Verification - L1</td><td>K2, GIS (Web)</td><td>MP O&amp;M</td><td>Maintenance Point</td></tr>
+        </table>
+
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">On the K2 main tile, click <b>"Review Survey (O&amp;M)"</b>.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text"><b>Validate</b> the Link-SPAN details along with <b>survey length</b> displayed on the K2 screen.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text"><b>View the link on GIS map</b> to verify the route.</span></div>
+            <div class="step"><span class="step-num">4</span><span class="step-text">If everything is correct, click <b>"Approve"</b>.</span></div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- NPE Approval -->
+    <div class="subsection" id="s3-npe-approval">
+        <h3>3.4 Survey Approval from NPE</h3>
+
+        <table class="role-table">
+            <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+            <tr><td>IntraCity Joint Survey - Verification - L1</td><td>K2, GIS (Web)</td><td>NPE</td><td>NHQ NPE</td></tr>
+        </table>
+
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">On K2 main tile, click <b>"Review Survey (NHQ NPE)"</b>.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text"><b>Validate</b> Intracity link details along with <b>survey length</b> on K2 screen.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text"><b>View link on GIS map</b> to verify.</span></div>
+            <div class="step"><span class="step-num">4</span><span class="step-text">Click <b>"Approve"</b>.</span></div>
+        </div>
+
+        <div class="success-box">
+            <b>After both approvals:</b> An email notification is automatically triggered to all stakeholders confirming O&amp;M and NPE approval is complete.
+        </div>
+    </div>
+</div>
+
+<!-- ===== SECTION 4: DESIGN ===== -->
+<div class="section" id="sec4">
+    <div class="section-header">
+        <div class="section-num">4</div>
+        <h2>Design</h2>
+    </div>
+
+    <p>After survey approval, the design phase begins using <b>Network Engineer (NE)</b> desktop application and automation tools.</p>
+
+    <table class="role-table">
+        <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+        <tr><td>Create Design</td><td>NE (Desktop)</td><td>NPE</td><td>SHQ / NHQ NPE</td></tr>
+        <tr><td>Design the InterCity Route</td><td>K2, GIS (Web)</td><td>NPE</td><td>NHQ</td></tr>
+    </table>
+
+    <!-- Design Automation Tools -->
+    <div class="subsection" id="s4-automation">
+        <h3>4.1 Design Automation Tools (One-Time Setup)</h3>
+
+        <div class="warn-box">
+            <b>Before you start:</b> Verify survey details with planned route and designing parallel lines.
+        </div>
+
+        <div class="phase-label">Step 1 — Add One Fiber Toolbar</div>
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">Open <b>Network Engineer (NE)</b> desktop application.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">Go to the <b>Customise</b> option.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text">Add the <b>One Fiber Toolbar</b>.</span></div>
+        </div>
+        <div class="info-box">
+            <b>Note:</b> This is a <b>one-time process</b>. Once added, the toolbar will always be available like other toolbars.
+        </div>
+
+        <div class="phase-label">Step 2 — Zoom to Link</div>
+        <div class="steps">
+            <div class="step"><span class="step-num">4</span><span class="step-text">Click on <b>"Zoom to Link"</b> tool from the One Fiber toolbar.</span></div>
+            <div class="step"><span class="step-num">5</span><span class="step-text">Select your <b>Link ID</b>.</span></div>
+            <div class="step"><span class="step-num">6</span><span class="step-text">Survey-approved routes will be displayed. The tool marked in yellow is used for the design process.</span></div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Design Initiation -->
+    <div class="subsection" id="s4-initiation">
+        <h3>4.2 Design Initiation</h3>
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">In NE, select the <b>Link ID / Intracity Link ID</b> using the <b>Zoom to Link</b> tool.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">Click <b>"Zoom to Link"</b> to initiate design.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text">You can now start designing the <b>Span</b>.</span></div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Design Using Custom Tool -->
+    <div class="subsection" id="s4-custom-tool">
+        <h3>4.3 Design Link Using Custom Tool</h3>
+        <p>Before starting, you must select <b>3 layers</b>:</p>
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text"><b>Planned Route</b> for the designated Span ID</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text"><b>Route Walk Survey</b> layer</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text"><b>Route Walk Structure</b> for proposed structure</span></div>
+        </div>
+        <div class="warn-box">
+            <b>Important:</b><br>
+            &#8226; The tool works only on a <b>single network category</b>.<br>
+            &#8226; Overlay portions must be designed <b>manually</b> if existing design is already available (the design tool does not consider existing design).
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Setting Up Design Rules -->
+    <div class="subsection" id="s4-rules">
+        <h3>4.4 Setting Up Design Rules</h3>
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">Set up the rules for lines required for design (e.g., <b>Extend</b>, <b>Trim</b> for overshoot and undershoot).</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">The <b>linear feature tool</b> will auto-detect errors and correct them.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text">Click <b>"Get Details"</b>.</span></div>
+            <div class="step"><span class="step-num">4</span><span class="step-text">Click <b>"Create RWS Lines"</b> to create parallel lines.</span></div>
+            <div class="step"><span class="step-num">5</span><span class="step-text">Verify in the <b>Table of Contents (TOC)</b> — new layers named "Parallel Line" should be created.</span></div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Network Model Selection -->
+    <div class="subsection" id="s4-network-models">
+        <h3>4.5 Selection of Network Models</h3>
+        <p>Models are selected based on survey execution methodology.</p>
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">Default parameters are pre-set for <b>Aerial</b> and <b>UG (Underground)</b> portions.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">Input the required values:
+                <ul>
+                    <li><b>Cable Length</b></li>
+                    <li><b>Span Length</b></li>
+                </ul>
+            </span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text">Models are <b>pre-selected</b> by the tool but you can change them if required.</span></div>
+            <div class="step"><span class="step-num">4</span><span class="step-text">The dropdown will only show models applicable for the selected network type.</span></div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Design Verification -->
+    <div class="subsection" id="s4-verification">
+        <h3>4.6 Design Verification</h3>
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">Verify the design as per <b>input parameters</b> and <b>survey parameters</b>.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">If any issue is found, <b>re-run the design tool</b> and follow all design steps again from the beginning.</span></div>
+        </div>
+        <div class="danger-box">
+            <b>&#9888; Always verify the design before updating in NE.</b> Do not skip this step.
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Design Completion -->
+    <div class="subsection" id="s4-completion">
+        <h3>4.7 Design Completion</h3>
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">Click <b>"Create Design"</b>.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">A <b>"Design Completed"</b> message will appear.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text">The design is now updated to the selected <b>Work Order in NE</b>.</span></div>
+        </div>
+
+        <div class="warn-box">
+            <b>Manual Steps Required After Completion:</b>
+        </div>
+        <div class="steps">
+            <div class="step"><span class="step-num">4</span><span class="step-text"><b>Duct Association:</b> Associate duct with transmedia — this must be done <b>manually</b>.</span></div>
+            <div class="step"><span class="step-num">5</span><span class="step-text"><b>Replace Existing Structures:</b>
+                <ul>
+                    <li>Manhole → use <b>MH-Dummy</b> model</li>
+                    <li>Pole → use <b>Tstruct</b> model</li>
+                </ul>
+            </span></div>
+            <div class="step"><span class="step-num">6</span><span class="step-text">Run <b>NE Custom Tools</b> to update boundary attributes and NE IDs for structures.</span></div>
+            <div class="step"><span class="step-num">7</span><span class="step-text">Run <b>NE Validation</b> before Work Order (WO) transition.</span></div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Trace Tool -->
+    <div class="subsection" id="s4-trace">
+        <h3>4.8 Trace Tool for Design</h3>
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">Run the <b>Trace Tool</b> for selection of network elements in the Work Order.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">Select the <b>Start Structure</b> and <b>End Structure</b> for the trace.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text">The Trace Tool will <b>validate the network inventory</b>.</span></div>
+            <div class="step"><span class="step-num">4</span><span class="step-text">Once validated, the data is sent for <b>BOQ</b> and <b>SOQ</b> generation.</span></div>
+        </div>
+
+        <div class="success-box">
+            <b>Result:</b> Once design is completed, it is available in Network Engineer and is ready to release for construction.
+        </div>
+    </div>
+</div>
+
+<!-- ===== SECTION 5: DESIGN RELEASE ===== -->
+<div class="section" id="sec5">
+    <div class="section-header">
+        <div class="section-num">5</div>
+        <h2>Design Release for Construction</h2>
+    </div>
+
+    <table class="role-table">
+        <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+        <tr><td>One Fiber Design Release - Intercity</td><td>K2 (Web)</td><td>NPE</td><td>SHQ</td></tr>
+    </table>
+
+    <div class="steps">
+        <div class="step"><span class="step-num">1</span><span class="step-text">On the K2 main tile, click <b>"Release for Construction"</b>.</span></div>
+        <div class="step"><span class="step-num">2</span><span class="step-text">Select <b>Intracity</b>. Links available for release will appear in the dropdown.</span></div>
+        <div class="step"><span class="step-num">3</span><span class="step-text">Select the link and click <b>"Release"</b>.</span></div>
+        <div class="step"><span class="step-num">4</span><span class="step-text">A <b>success message</b> will be displayed confirming the release.</span></div>
+    </div>
+
+    <div class="info-box">
+        <b>After release:</b> The Work Order for design is now in process. Mail notification is sent to users.
+    </div>
+
+    <div class="success-box">
+        Once design is released in GIS, mail notifications are sent to users. Weekly mail notifications are also sent about designs released during the week.
+    </div>
+</div>
+
+<!-- ===== SECTION 6: DESIGN TO RFC ===== -->
+<div class="section" id="sec6">
+    <div class="section-header">
+        <div class="section-num">6</div>
+        <h2>Design to RFC (Manual Design)</h2>
+    </div>
+
+    <p>This phase covers BOQ generation, SOQ generation, CAPEX estimation, and CAPEX approval.</p>
+
+    <!-- Generate BOQ -->
+    <div class="subsection" id="s6-boq">
+        <h3>6.1 Generate BOQ (Bill of Quantities)</h3>
+
+        <table class="role-table">
+            <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+            <tr><td>InterCity Generate BOQ</td><td>K2, GIS (Web)</td><td>InterCity MPCM</td><td>Maintenance Point</td></tr>
+        </table>
+
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">A mail notification is sent to the user. The task appears in the <b>"My Task"</b> list on K2.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">Click on the <b>"Generate BOQ"</b> task.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text">The <b>GIS page</b> will open and display the link on the map.</span></div>
+            <div class="step"><span class="step-num">4</span><span class="step-text">BOQ is <b>automatically generated</b> at the GIS end.</span></div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Generate SOQ -->
+    <div class="subsection" id="s6-soq">
+        <h3>6.2 Generate SOQ (Schedule of Quantities)</h3>
+
+        <table class="role-table">
+            <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+            <tr><td>InterCity Generate SOQ</td><td>K2, GIS (Web)</td><td>InterCity MPCM</td><td>Maintenance Point</td></tr>
+        </table>
+
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">A mail notification is sent for SOQ generation. Task appears in <b>"My Task"</b> list.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">Click on the SOQ task.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text"><b>GIS map</b> will open and <b>SOQ details</b> from GIS are displayed on screen.</span></div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- CAPEX Estimation -->
+    <div class="subsection" id="s6-capex">
+        <h3>6.3 CAPEX Estimation</h3>
+
+        <table class="role-table">
+            <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+            <tr><td>InterCity CAPEX Estimation</td><td>K2, GIS (Web)</td><td>InterCity MPCM</td><td>Maintenance Point</td></tr>
+        </table>
+
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">A mail notification is sent for CAPEX estimation. Task appears in <b>"My Task"</b> list.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">Click on <b>"Estimate Capex Limit"</b> task.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text"><b>BOQ</b>, <b>SOQ</b>, and <b>ROW cost</b> for the link are displayed.</span></div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Finalize CAPEX -->
+    <div class="subsection" id="s6-finalize">
+        <h3>6.4 Finalize CAPEX (Approval)</h3>
+
+        <table class="role-table">
+            <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+            <tr><td>CAPEX Approval</td><td>K2, GIS (Web)</td><td>State FC&amp;A Lead / Head</td><td>SHQ</td></tr>
+        </table>
+
+        <div class="steps">
+            <div class="step"><span class="step-num">1</span><span class="step-text">A mail notification is sent for CAPEX approval. Task appears in <b>"My Task"</b> list.</span></div>
+            <div class="step"><span class="step-num">2</span><span class="step-text">Click on <b>"Finalize Capex Task"</b> in the My Task list.</span></div>
+            <div class="step"><span class="step-num">3</span><span class="step-text">Review the details and click <b>"Approve"</b>.</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== SECTION 7: INITIATE CONSTRUCTION ===== -->
+<div class="section" id="sec7">
+    <div class="section-header">
+        <div class="section-num">7</div>
+        <h2>Initiate Construction</h2>
+    </div>
+
+    <p>The final phase — releasing and initiating construction in the field.</p>
+
+    <div class="phase-label">Part 1 — CPC Release for Construction</div>
+
+    <table class="role-table">
+        <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+        <tr><td>CPC Release For Construction</td><td>K2, GIS (Web)</td><td>CPC</td><td>NHQ</td></tr>
+    </table>
+
+    <div class="steps">
+        <div class="step"><span class="step-num">1</span><span class="step-text">Click <b>"Release for Construction"</b> tab on the K2 main tile.</span></div>
+        <div class="step"><span class="step-num">2</span><span class="step-text">Select <b>Network Type → Intercity</b> and search for link details.</span></div>
+        <div class="step"><span class="step-num">3</span><span class="step-text">Select the links and click <b>"Release for Construction"</b>.</span></div>
+    </div>
+
+    <div class="info-box">
+        <b>After release:</b> State-wise scope released for construction summary mail and all-state summary mail are sent automatically.
+    </div>
+
+    <hr class="divider">
+
+    <div class="phase-label">Part 2 — Field Construction Initiation</div>
+
+    <table class="role-table">
+        <tr><th>Task</th><th>System</th><th>Role</th><th>Location</th></tr>
+        <tr><td>Link-wise Initiate Construction</td><td>K2, GIS (Web)</td><td>InterCity Field Engineer</td><td>Maintenance Point</td></tr>
+    </table>
+
+    <div class="steps">
+        <div class="step"><span class="step-num">4</span><span class="step-text">Click <b>"Initiate Construction"</b> tab on the <b>One Fiber tile</b>.</span></div>
+        <div class="step"><span class="step-num">5</span><span class="step-text">Select <b>Network Type → Intercity</b>. Link details will be displayed.</span></div>
+        <div class="step"><span class="step-num">6</span><span class="step-text">Select the links and click <b>"Release for Construction"</b>.</span></div>
+    </div>
+
+    <div class="success-box">
+        <b>&#10004; Construction is now initiated!</b> The field team can begin construction work.
+    </div>
+</div>
+
+<!-- Footer -->
+<div style="text-align:center; padding:40px 0; color:var(--gray-600); font-size:0.85rem; border-top:1px solid var(--gray-200); margin-top:30px;">
+    <p><b>NPD User Manual</b> — Network Planning &amp; Design</p>
+    <p>One Fiber &nbsp;|&nbsp; For Field Users</p>
+</div>
+
+</main>
+</div>
+
+</body>
+</html>
