@@ -22,6 +22,62 @@
             --shadow: 0 2px 12px rgba(0,0,0,0.08);
             --radius: 16px;
             --chat-width: 560px;
+            --badge-bg: #e8eaf6;
+            --badge-border: #c5cae9;
+            --badge-text: #1a237e;
+            --line-color: #c5cae9;
+            --note-bg: #fff3e0;
+            --note-border: #ff9800;
+            --note-text: #e65100;
+        }
+
+        /* ===== Dark Theme ===== */
+        body.dark {
+            --primary: #7986cb;
+            --primary-light: #9fa8da;
+            --accent: #4dd0e1;
+            --accent-light: #80deea;
+            --bg: #0f0f1a;
+            --white: #1a1a2e;
+            --gray-100: #22223a;
+            --gray-200: #2a2a45;
+            --gray-300: #3a3a58;
+            --gray-600: #9999bb;
+            --text: #e0e0ef;
+            --shadow: 0 2px 12px rgba(0,0,0,0.3);
+            --badge-bg: #22223a;
+            --badge-border: #3a3a58;
+            --badge-text: #9fa8da;
+            --line-color: #3a3a58;
+            --note-bg: #2a2010;
+            --note-border: #ff9800;
+            --note-text: #ffb74d;
+        }
+        body.dark .header {
+            background: linear-gradient(135deg, #1a1a2e, #2a2a45);
+        }
+        body.dark .msg.bot .avatar {
+            background: linear-gradient(135deg, #3949ab, #5c6bc0);
+        }
+        body.dark .msg.user .bubble {
+            background: linear-gradient(135deg, #3949ab, #5c6bc0);
+        }
+        body.dark .msg.bot .bubble { background: var(--white); }
+        body.dark .bubble h3 { color: var(--accent); }
+        body.dark .bubble a { color: var(--accent); }
+        body.dark .quick-btn:hover {
+            background: var(--primary); color: #fff; border-color: var(--primary);
+        }
+        body.dark #userInput {
+            background: var(--white); color: var(--text); border-color: var(--gray-300);
+        }
+        body.dark #userInput::placeholder { color: var(--gray-600); }
+        body.dark .input-area { background: var(--gray-200); border-color: var(--gray-300); }
+        body.dark .topic-chip:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+        body.dark .header-btn { color: var(--accent); }
+        body.dark .header-btn:hover { background: rgba(255,255,255,0.1); }
+        body.dark .btn-send {
+            background: linear-gradient(135deg, #3949ab, #5c6bc0);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -35,6 +91,7 @@
             flex-direction: column;
             align-items: center;
             overflow: hidden;
+            transition: background 0.3s, color 0.3s;
         }
 
         /* ===== Header ===== */
@@ -42,14 +99,30 @@
             width: 100%;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: var(--white);
-            padding: 14px 20px;
-            text-align: center;
+            padding: 10px 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             z-index: 10;
+            transition: background 0.3s;
         }
-        .header h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: 0.5px; }
-        .header p { font-size: 0.78rem; opacity: 0.8; margin-top: 2px; }
-        .header i { color: var(--accent); margin-right: 8px; }
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .header-left h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: 0.5px; color: #fff; }
+        .header-left p { font-size: 0.75rem; opacity: 0.8; margin-top: 1px; color: #fff; }
+        .header-left i { color: var(--accent); margin-right: 8px; }
+        .header-actions { display: flex; gap: 6px; }
+        .header-btn {
+            width: 36px; height: 36px; border-radius: 50%;
+            border: none; background: rgba(255,255,255,0.15);
+            color: #fff; cursor: pointer; font-size: 0.9rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .header-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.05); }
 
         /* ===== Chat Wrapper - centered with blank sides ===== */
         .chat-wrapper {
@@ -83,8 +156,8 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 0.85rem; flex-shrink: 0;
         }
-        .msg.bot .avatar { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: var(--white); }
-        .msg.user .avatar { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: var(--white); }
+        .msg.bot .avatar { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; }
+        .msg.user .avatar { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; }
 
         .bubble {
             padding: 12px 14px;
@@ -93,39 +166,36 @@
             line-height: 1.55;
             box-shadow: var(--shadow);
             max-width: calc(100% - 44px);
+            transition: background 0.3s;
         }
         .msg.bot .bubble { background: var(--white); border-bottom-left-radius: 4px; }
-        .msg.user .bubble { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: var(--white); border-bottom-right-radius: 4px; }
+        .msg.user .bubble { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; border-bottom-right-radius: 4px; }
 
-        .bubble h3 { font-size: 0.95rem; color: var(--primary); margin-bottom: 8px; }
+        .bubble h3 { font-size: 0.95rem; color: var(--primary); margin-bottom: 8px; transition: color 0.3s; }
         .bubble .step { display: flex; gap: 8px; margin: 6px 0; align-items: flex-start; }
         .bubble .step-num {
-            background: var(--primary); color: var(--white);
+            background: var(--primary); color: #fff;
             width: 22px; height: 22px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 0.72rem; font-weight: 700; flex-shrink: 0; margin-top: 1px;
         }
         .bubble .step-text { flex: 1; }
         .bubble .note {
-            background: #fff3e0; border-left: 3px solid #ff9800;
+            background: var(--note-bg); border-left: 3px solid var(--note-border);
             padding: 6px 10px; border-radius: 4px;
-            font-size: 0.82rem; margin-top: 8px; color: #e65100;
+            font-size: 0.82rem; margin-top: 8px; color: var(--note-text);
         }
-        .bubble .info-box {
-            background: var(--gray-100); padding: 8px 10px;
-            border-radius: 8px; margin-top: 8px; font-size: 0.82rem;
-        }
-        .bubble .info-box b { color: var(--primary); }
         .bubble ul { padding-left: 16px; margin: 4px 0; }
         .bubble li { margin: 3px 0; }
-        .bubble a { color: var(--primary); text-decoration: underline; }
+        .bubble a { color: var(--primary); text-decoration: underline; transition: color 0.3s; }
 
         /* ===== Role/System Badges ===== */
         .meta-badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px; }
         .badge {
             display: inline-flex; align-items: center; gap: 4px;
             padding: 4px 11px; border-radius: 14px; font-size: 0.74rem; font-weight: 600;
-            background: #e8eaf6; color: var(--primary); border: 1.5px solid #c5cae9;
+            background: var(--badge-bg); color: var(--badge-text);
+            border: 1.5px solid var(--badge-border); transition: all 0.3s;
         }
         .badge i { font-size: 0.68rem; }
 
@@ -142,8 +212,9 @@
             top: 14px;
             bottom: 14px;
             width: 2.5px;
-            background: #c5cae9;
+            background: var(--line-color);
             border-radius: 2px;
+            transition: background 0.3s;
         }
         .steps-wrap .step {
             position: relative;
@@ -158,17 +229,14 @@
             left: -28px;
             z-index: 1;
             border: 2.5px solid var(--white);
-            box-shadow: 0 0 0 2px #c5cae9;
+            box-shadow: 0 0 0 2px var(--line-color);
+            transition: all 0.3s;
         }
         .steps-wrap .step-text { flex: 1; }
-        .steps-wrap .phase-label {
-            font-weight: 700; color: var(--primary);
-            padding: 8px 0 2px; font-size: 0.85rem;
-        }
         .bubble .phase-label {
             font-weight: 700; color: var(--primary);
             padding: 8px 0 2px; font-size: 0.85rem;
-            margin-top: 8px;
+            margin-top: 8px; transition: color 0.3s;
         }
 
         /* ===== Quick Buttons ===== */
@@ -184,7 +252,7 @@
             transition: all 0.2s ease; display: flex; align-items: center; gap: 5px;
         }
         .quick-btn:hover {
-            background: var(--primary); color: var(--white);
+            background: var(--primary); color: #fff;
             border-color: var(--primary); transform: translateY(-1px);
         }
 
@@ -195,7 +263,7 @@
             padding: 5px 10px; border-radius: 16px; font-size: 0.78rem;
             cursor: pointer; color: var(--primary); transition: all 0.2s;
         }
-        .topic-chip:hover { background: var(--primary); color: var(--white); border-color: var(--primary); }
+        .topic-chip:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
 
         /* ===== Input Area ===== */
         .input-area {
@@ -204,19 +272,20 @@
             border-top: 1px solid var(--gray-200);
             width: var(--chat-width);
             max-width: 100%;
+            transition: all 0.3s;
         }
         .input-row { display: flex; gap: 8px; }
         #userInput {
             flex: 1; padding: 12px 16px;
             border: 2px solid var(--gray-300); border-radius: 24px;
             font-size: 0.9rem; outline: none; font-family: inherit;
-            transition: border-color 0.2s;
+            transition: all 0.3s; background: var(--white); color: var(--text);
         }
         #userInput:focus { border-color: var(--primary-light); }
         .btn-send {
             width: 44px; height: 44px; border-radius: 50%;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: var(--white); border: none; cursor: pointer;
+            color: #fff; border: none; cursor: pointer;
             font-size: 1rem; display: flex; align-items: center; justify-content: center;
             transition: transform 0.2s;
         }
@@ -237,6 +306,8 @@
             :root { --chat-width: 100%; }
             .chat-messages { padding: 12px 10px; }
             .input-area { padding: 8px 10px 12px; }
+            .header { padding: 8px 12px; }
+            .header-left h1 { font-size: 1rem; }
         }
     </style>
 </head>
@@ -244,8 +315,17 @@
 
     <!-- Header -->
     <header class="header">
-        <h1><i class="fas fa-network-wired"></i>NPD ChatBot</h1>
-        <p>Network Planning &amp; Design Assistant</p>
+        <div class="header-row">
+            <div class="header-left">
+                <h1><i class="fas fa-network-wired"></i>NPD ChatBot</h1>
+                <p>Network Planning &amp; Design Assistant</p>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn" id="backBtn" title="Back to previous"><i class="fas fa-arrow-left"></i></button>
+                <button class="header-btn" id="clearBtn" title="Main Menu"><i class="fas fa-home"></i></button>
+                <button class="header-btn" id="themeBtn" title="Toggle Theme"><i class="fas fa-moon"></i></button>
+            </div>
+        </div>
     </header>
 
     <!-- Chat Wrapper (centered) -->
@@ -255,12 +335,14 @@
 
     <!-- Quick Actions -->
     <div class="quick-actions" id="quickActions" style="width:var(--chat-width);max-width:100%;">
-        <button class="quick-btn" data-q="Show all topics"><i class="fas fa-th-list"></i> All Topics</button>
+        <button class="quick-btn" data-q="Get Access"><i class="fas fa-key"></i> Get Access</button>
         <button class="quick-btn" data-q="Scope & Planning"><i class="fas fa-map-marked-alt"></i> Scope &amp; Planning</button>
         <button class="quick-btn" data-q="Survey"><i class="fas fa-clipboard-check"></i> Survey</button>
-        <button class="quick-btn" data-q="Design Automation Tools"><i class="fas fa-tools"></i> Design Automation</button>
-        <button class="quick-btn" data-q="Route Planning in GIS"><i class="fas fa-route"></i> Route Planning</button>
-        <button class="quick-btn" data-q="Initiate Construction"><i class="fas fa-hard-hat"></i> Construction</button>
+        <button class="quick-btn" data-q="Design"><i class="fas fa-drafting-compass"></i> Design</button>
+        <button class="quick-btn" data-q="BOQ & SOQ"><i class="fas fa-file-invoice"></i> BOQ &amp; SOQ</button>
+        <button class="quick-btn" data-q="Release for Construction"><i class="fas fa-hard-hat"></i> Release for Construction</button>
+        <button class="quick-btn" data-q="Roles & Tasks"><i class="fas fa-users-cog"></i> Roles &amp; Tasks</button>
+        <button class="quick-btn" data-q="Glossary"><i class="fas fa-book"></i> Glossary</button>
     </div>
 
     <!-- Input -->
@@ -276,6 +358,23 @@
 // KNOWLEDGE BASE — Step-by-step NPD Process Guide
 // =====================================================
 const KB = [
+  {
+    id: "get_access",
+    topic: "Get Access",
+    keywords: ["access","login","new user","url","oneinfra","super admin","role","permission","sign up","register"],
+    answer: `<h3>Here's how to get access to the <b>NPD system</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: New User</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: One Fiber Portal (Web)</span>
+</div>
+<p class="phase-label"><b>For New Users</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">Login to the URL: <a href="https://osp.jio.com/oneinfra/" target="_blank">https://osp.jio.com/oneinfra/</a></span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Select the required <b>Role</b> for access.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">The request will be sent to <b>NHQ Intercity / Intracity Super Admin</b> for approval.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text">After approval, system login and task execution will be enabled.</span></div>
+</div>`
+  },
   {
     id: "scope_planning",
     topic: "Scope & Planning",
@@ -399,6 +498,37 @@ const KB = [
 <div class="step"><span class="step-num">3</span><span class="step-text">View the link on <b>GIS map</b> to verify.</span></div>
 <div class="step"><span class="step-num">4</span><span class="step-text">Click <b>Approve</b>.</span></div>
 <div class="step"><span class="step-num">5</span><span class="step-text">Email notification is triggered after approval.</span></div>
+</div>`
+  },
+  {
+    id: "design",
+    topic: "Design",
+    keywords: ["design","design process","design overview","ne","network engineer","design automation","design initiation","custom tool","design rules","network models","design verification","design completion","trace tool"],
+    answer: `<h3>Here's the <b>Design Process</b> overview:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: NE (Desktop)</span>
+</div>
+<p>The NPD design process uses <b>Network Engineer (NE)</b> desktop application. It involves the following stages:</p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text"><b>Design Automation Setup</b> — Add One Fiber Toolbar in NE (one-time setup), then use Zoom to Link tool.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text"><b>Design Initiation</b> — Open NE, select Link ID, and start designing the Span.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text"><b>Custom Tool Design</b> — Select 3 layers (Planned Route, Route Walk Survey, Route Walk Structure) and design.</span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text"><b>Design Rules</b> — Set up Extend/Trim rules, create RWS parallel lines.</span></div>
+<div class="step"><span class="step-num">5</span><span class="step-text"><b>Network Models</b> — Select Aerial/UG models, input Cable Length and Span Length.</span></div>
+<div class="step"><span class="step-num">6</span><span class="step-text"><b>Verification</b> — Verify design as per input and survey parameters.</span></div>
+<div class="step"><span class="step-num">7</span><span class="step-text"><b>Completion</b> — Click Create Design, then do manual steps (Duct association, MH/Pole replacement, NE Validation).</span></div>
+</div>
+<p style="margin-top:10px"><b>Click a topic for detailed steps:</b></p>
+<div class="topic-chips">
+<span class="topic-chip" data-q="Design Automation Tools">Design Automation Tools</span>
+<span class="topic-chip" data-q="Design Initiation">Design Initiation</span>
+<span class="topic-chip" data-q="Design Link Using Custom Tool">Custom Tool</span>
+<span class="topic-chip" data-q="Setting Up Design Rules">Design Rules</span>
+<span class="topic-chip" data-q="Selection of Network Models">Network Models</span>
+<span class="topic-chip" data-q="Design Verification">Verification</span>
+<span class="topic-chip" data-q="Design Completion">Completion</span>
+<span class="topic-chip" data-q="Trace Tool for Design">Trace Tool</span>
 </div>`
   },
   {
@@ -555,75 +685,134 @@ const KB = [
 </div>`
   },
   {
-    id: "design_release",
-    topic: "Design Release for Construction",
-    keywords: ["design release","release for construction","release construction","k2 main tile","intracity","workorder"],
-    answer: `<h3>Here's how to <b>release a design for construction</b>:</h3>
+    id: "boq_soq",
+    topic: "BOQ & SOQ",
+    keywords: ["boq","soq","bill of quantities","statement of quantities","generate boq","generate soq","capex","estimate capex","finalize capex","capex approval","capex estimation","my task"],
+    answer: `<h3>Here's the <b>BOQ & SOQ</b> generation process:</h3>
 <div class="meta-badges">
-  <span class="badge"><i class="fas fa-user-tag"></i> Role: NPE</span>
-  <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
-</div>
-<div class="steps-wrap">
-<div class="step"><span class="step-num">1</span><span class="step-text">On K2 main tile, click <b>"Release for Construction"</b>.</span></div>
-<div class="step"><span class="step-num">2</span><span class="step-text">Select <b>Intracity</b>. Links available for release will appear in dropdown.</span></div>
-<div class="step"><span class="step-num">3</span><span class="step-text">Select the link and click <b>Release</b>.</span></div>
-<div class="step"><span class="step-num">4</span><span class="step-text">A <b>success message</b> will be displayed after link release.</span></div>
-<div class="step"><span class="step-num">5</span><span class="step-text">Work order for design is now in process.</span></div>
-</div>`
-  },
-  {
-    id: "design_to_rfc",
-    topic: "Design to RFC (Manual Design)",
-    keywords: ["design to rfc","rfc","manual design","boq","soq","capex","generate boq","generate soq","estimate capex","finalize capex","capex approval","capex estimation"],
-    answer: `<h3>Here's the <b>Design to RFC</b> process:</h3>
-<div class="meta-badges">
-  <span class="badge"><i class="fas fa-user-tag"></i> Role: InterCity MPCM / State FC&A</span>
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: InterCity MPCM</span>
   <span class="badge"><i class="fas fa-desktop"></i> System: K2 & GIS (Web)</span>
 </div>
-<p class="phase-label"><b>Step A — Release for Construction</b></p>
+<p class="phase-label"><b>Step 1 — Generate BOQ</b></p>
 <div class="steps-wrap">
-<div class="step"><span class="step-num">1</span><span class="step-text">Click <b>"Release for Construction"</b> on K2 main tile. Select Intercity link and release.</span></div>
+<div class="step"><span class="step-num">1</span><span class="step-text">After design release, a <b>mail notification</b> is sent. Task appears in <b>"My Task"</b> list on K2.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Click <b>"Generate BOQ"</b> task. GIS page opens showing the link on map.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text"><b>BOQ (Bill of Quantities)</b> is generated automatically.</span></div>
 </div>
-<p class="phase-label"><b>Step B — Generate BOQ</b></p>
-<div class="steps-wrap">
-<div class="step"><span class="step-num">2</span><span class="step-text">Mail notification is sent. Task appears in <b>"My Task"</b> list.</span></div>
-<div class="step"><span class="step-num">3</span><span class="step-text">Click <b>"Generate BOQ"</b> task. GIS page opens showing the link on map. BOQ is generated.</span></div>
-</div>
-<p class="phase-label"><b>Step C — Generate SOQ</b></p>
+<p class="phase-label"><b>Step 2 — Generate SOQ</b></p>
 <div class="steps-wrap">
 <div class="step"><span class="step-num">4</span><span class="step-text">Mail notification is sent for SOQ generation. Task appears in <b>"My Task"</b> list.</span></div>
-<div class="step"><span class="step-num">5</span><span class="step-text">Click on the task. GIS map opens with <b>SOQ details</b> displayed on screen.</span></div>
+<div class="step"><span class="step-num">5</span><span class="step-text">Click on the task. GIS map opens with <b>SOQ (Statement of Quantities)</b> details displayed.</span></div>
 </div>
-<p class="phase-label"><b>Step D — CAPEX Estimation</b></p>
+<p class="phase-label"><b>Step 3 — CAPEX Estimation & Approval</b></p>
 <div class="steps-wrap">
 <div class="step"><span class="step-num">6</span><span class="step-text">Click <b>"Estimate Capex Limit"</b> task. BOQ, SOQ, and ROW cost for the link are displayed.</span></div>
-</div>
-<p class="phase-label"><b>Step E — Finalize CAPEX</b></p>
-<div class="steps-wrap">
 <div class="step"><span class="step-num">7</span><span class="step-text">Click <b>"Finalize Capex Task"</b> in My Task list and approve.</span></div>
+</div>
+<div class="note"><b>CAPEX Approval:</b> Finalized by <b>State FC&A Lead / Head</b>.</div>`
+  },
+  {
+    id: "release_construction",
+    topic: "Release for Construction",
+    keywords: ["release for construction","release construction","design release","initiate construction","cpc release","field engineer","one fiber tile","k2 main tile","intracity","intercity"],
+    answer: `<h3>Here's how to <b>release for construction</b>:</h3>
+<div class="meta-badges">
+  <span class="badge"><i class="fas fa-user-tag"></i> Role: CPC / NPE / InterCity FE</span>
+  <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
+</div>
+<p class="phase-label"><b>Part 1 — Design Release</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">1</span><span class="step-text">On K2 main tile, click <b>"Release for Construction"</b>.</span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text">Select <b>Intracity / Intercity</b>. Links available for release will appear.</span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text">Select the link and click <b>Release</b>. A success message is displayed.</span></div>
+</div>
+<p class="phase-label"><b>Part 2 — CPC Release</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">4</span><span class="step-text">Select <b>Network Type → Intercity</b> and search for link details.</span></div>
+<div class="step"><span class="step-num">5</span><span class="step-text">Select links and click <b>Release for Construction</b>.</span></div>
+<div class="step"><span class="step-num">6</span><span class="step-text">State-wise and all-state summary mails are sent to stakeholders.</span></div>
+</div>
+<p class="phase-label"><b>Part 3 — Field Construction Initiation</b></p>
+<div class="steps-wrap">
+<div class="step"><span class="step-num">7</span><span class="step-text">Click <b>"Initiate Construction"</b> tab on <b>One Fiber tile</b>.</span></div>
+<div class="step"><span class="step-num">8</span><span class="step-text">Select <b>Network Type → Intercity</b>. Link details will be displayed.</span></div>
+<div class="step"><span class="step-num">9</span><span class="step-text">Select the links and <b>release for construction</b>.</span></div>
 </div>`
   },
   {
-    id: "initiate_construction",
-    topic: "Initiate Construction",
-    keywords: ["initiate construction","construction","release for construction","cpc release","field engineer","one fiber tile"],
-    answer: `<h3>Here's how to <b>initiate construction</b>:</h3>
-<div class="meta-badges">
-  <span class="badge"><i class="fas fa-user-tag"></i> Role: CPC / InterCity FE</span>
-  <span class="badge"><i class="fas fa-desktop"></i> System: K2 (Web)</span>
-</div>
-<p class="phase-label"><b>Part 1 — CPC Release for Construction</b></p>
+    id: "roles_tasks",
+    topic: "Roles & Tasks",
+    keywords: ["roles","tasks","role","user","who","responsibility","npe","cpc","field engineer","mpcm","o&m","fc&a","super admin","permission"],
+    answer: `<h3><b>Roles & Tasks</b> in NPD:</h3>
 <div class="steps-wrap">
-<div class="step"><span class="step-num">1</span><span class="step-text">Click <b>"Release for Construction"</b> tab on K2 main tile.</span></div>
-<div class="step"><span class="step-num">2</span><span class="step-text">Select <b>Network Type → Intercity</b> and search for link details.</span></div>
-<div class="step"><span class="step-num">3</span><span class="step-text">Select links and click <b>Release for Construction</b>.</span></div>
-<div class="step"><span class="step-num">4</span><span class="step-text">State-wise and all-state summary mails are sent.</span></div>
-</div>
-<p class="phase-label"><b>Part 2 — Field Construction Initiation</b></p>
+<div class="step"><span class="step-num">1</span><span class="step-text"><b>NPE (Network Planning Executive)</b>
+<ul>
+<li>Plans routes in GIS</li>
+<li>Initiates & completes design in NE</li>
+<li>Approves surveys</li>
+<li>Releases for construction</li>
+<li><b>System:</b> GIS, NE, K2 &nbsp;|&nbsp; <b>Location:</b> NHQ / SHQ</li>
+</ul></span></div>
+<div class="step"><span class="step-num">2</span><span class="step-text"><b>CPC (Central Planning Cell)</b>
+<ul>
+<li>Releases scope for survey</li>
+<li>Releases for construction</li>
+<li><b>System:</b> K2 &nbsp;|&nbsp; <b>Location:</b> NHQ</li>
+</ul></span></div>
+<div class="step"><span class="step-num">3</span><span class="step-text"><b>InterCity FE (Field Engineer)</b>
+<ul>
+<li>Conducts field survey using mDSurvey app</li>
+<li>Initiates construction at maintenance point</li>
+<li><b>System:</b> mDSurvey (Mobile), K2</li>
+</ul></span></div>
+<div class="step"><span class="step-num">4</span><span class="step-text"><b>MPCM (Maintenance Point Construction Manager)</b>
+<ul>
+<li>Manages BOQ & SOQ generation</li>
+<li><b>System:</b> K2, GIS</li>
+</ul></span></div>
+<div class="step"><span class="step-num">5</span><span class="step-text"><b>O&M (Operations & Maintenance)</b>
+<ul>
+<li>Approves surveys on K2</li>
+<li><b>System:</b> K2</li>
+</ul></span></div>
+<div class="step"><span class="step-num">6</span><span class="step-text"><b>State FC&A Lead / Head</b>
+<ul>
+<li>Approves CAPEX estimation</li>
+<li><b>System:</b> K2</li>
+</ul></span></div>
+<div class="step"><span class="step-num">7</span><span class="step-text"><b>NHQ Super Admin</b>
+<ul>
+<li>Approves new user access requests</li>
+<li><b>System:</b> One Fiber Portal</li>
+</ul></span></div>
+</div>`
+  },
+  {
+    id: "glossary",
+    topic: "Glossary",
+    keywords: ["glossary","abbreviation","abbreviations","term","terms","meaning","definition","full form","what is","what does"],
+    answer: `<h3><b>NPD Glossary</b></h3>
 <div class="steps-wrap">
-<div class="step"><span class="step-num">5</span><span class="step-text">Click <b>"Initiate Construction"</b> tab on <b>One Fiber tile</b>.</span></div>
-<div class="step"><span class="step-num">6</span><span class="step-text">Select <b>Network Type → Intercity</b>. Link details will be displayed.</span></div>
-<div class="step"><span class="step-num">7</span><span class="step-text">Select the links and <b>release for construction</b>.</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>NPD</b> — Network Planning & Design</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>GIS</b> — Geographic Information System (route planning & scope marking)</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>K2</b> — Workflow Engine for task management & approvals</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>NE</b> — Network Engineer (desktop application for design)</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>mDSurvey</b> — Mobile app for field surveys</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>BOQ</b> — Bill of Quantities</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>SOQ</b> — Statement of Quantities</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>CAPEX</b> — Capital Expenditure</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>RFC</b> — Ready for Construction</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>CPC</b> — Central Planning Cell</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>NPE</b> — Network Planning Executive</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>FE</b> — Field Engineer</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>MPCM</b> — Maintenance Point Construction Manager</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>O&M</b> — Operations & Maintenance</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>FC&A</b> — Finance, Control & Accounts</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>NHQ</b> — National Headquarters</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>SHQ</b> — State Headquarters</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>WO</b> — Work Order</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>CR Portal</b> — Change Request Portal</span></div>
+<div class="step"><span class="step-num"><i class="fas fa-info" style="font-size:0.6rem"></i></span><span class="step-text"><b>One Fiber</b> — Unified portal for fiber network operations</span></div>
 </div>`
   }
 ];
@@ -635,9 +824,14 @@ const chatMessages = document.getElementById('chatMessages');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const quickActions = document.getElementById('quickActions');
+const backBtn = document.getElementById('backBtn');
+const clearBtn = document.getElementById('clearBtn');
+const themeBtn = document.getElementById('themeBtn');
 
-// Welcome
-addBot(`<h3>Welcome to NPD ChatBot!</h3>
+// Chat history for back navigation
+let chatHistory = []; // stores message count snapshots
+
+const WELCOME_HTML = `<h3>Welcome to NPD ChatBot!</h3>
 <p>The <b>NPD (Network Planning & Design)</b> is a workflow module in the <b>JIO Infra Build</b> platform that enables planning, designing, and releasing fiber optic network routes for construction across PAN India.</p>
 <p style="margin-top:8px">The application integrates with <b>K2 workflow engine</b> for task management & approvals, <b>GIS</b> (Geographic Information System) for route planning & scope marking, <b>Network Engineer (NE)</b> for design automation, and <b>mDSurvey</b> mobile app for field surveys.</p>
 <p style="margin-top:8px">This chatbot serves as a dedicated assistant, offering a <b>step-by-step guide</b> through the entire NPD lifecycle, including:</p>
@@ -648,7 +842,10 @@ addBot(`<h3>Welcome to NPD ChatBot!</h3>
 <li>BOQ, SOQ & CAPEX Processing</li>
 <li>Construction Initiation</li>
 </ul>
-<p style="margin-top:8px">Click a button below or type your question to get started.</p>`);
+<p style="margin-top:8px">Click a button below or type your question to get started.</p>`;
+
+// Welcome
+addBot(WELCOME_HTML);
 
 // Events
 sendBtn.addEventListener('click', send);
@@ -657,9 +854,46 @@ document.querySelectorAll('.quick-btn').forEach(b => {
     b.addEventListener('click', () => { userInput.value = b.dataset.q; send(); });
 });
 
+// Back button — removes last user+bot message pair
+backBtn.addEventListener('click', () => {
+    if (chatHistory.length > 0) {
+        const prevCount = chatHistory.pop();
+        // Remove messages until we're back to previous count
+        while (chatMessages.children.length > prevCount) {
+            chatMessages.removeChild(chatMessages.lastChild);
+        }
+        if (chatMessages.children.length <= 1) {
+            quickActions.style.display = 'flex';
+        }
+        scrollDown();
+    }
+});
+
+// Clear button — back to main menu
+clearBtn.addEventListener('click', () => {
+    chatMessages.innerHTML = '';
+    chatHistory = [];
+    addBot(WELCOME_HTML);
+    quickActions.style.display = 'flex';
+    scrollDown();
+});
+
+// Theme toggle
+let isDark = false;
+themeBtn.addEventListener('click', () => {
+    isDark = !isDark;
+    document.body.classList.toggle('dark', isDark);
+    themeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    themeBtn.title = isDark ? 'Light Theme' : 'Dark Theme';
+});
+
 function send() {
     const q = userInput.value.trim();
     if (!q) return;
+
+    // Save current message count before adding new messages
+    chatHistory.push(chatMessages.children.length);
+
     addUser(q);
     userInput.value = '';
     quickActions.style.display = 'none';
@@ -726,6 +960,7 @@ function getAnswer(query) {
 <li>Ask about any NPD process (e.g., "How does survey work?")</li>
 <li>Click the quick buttons for common topics</li>
 <li>Type "all topics" to see everything I know</li>
+<li>Use <b>←</b> to go back, <b>🏠</b> for main menu, <b>🌙</b> to toggle theme</li>
 </ul>`;
     }
     // All topics
@@ -738,7 +973,8 @@ function getAnswer(query) {
     const results = searchKB(q);
 
     if (results.length === 0) {
-        const suggestions = KB.slice(0, 6).map(k => `<span class="topic-chip" data-q="${esc(k.topic)}">${esc(k.topic)}</span>`).join('');
+        const suggestions = KB.filter(k => ['get_access','scope_planning','survey','design','boq_soq','release_construction','roles_tasks','glossary'].includes(k.id))
+            .map(k => `<span class="topic-chip" data-q="${esc(k.topic)}">${esc(k.topic)}</span>`).join('');
         return `<p>I couldn't find a match for "<b>${esc(query)}</b>". Try one of these topics:</p><div class="topic-chips">${suggestions}</div>`;
     }
 
