@@ -96,11 +96,13 @@
 
         /* ===== Header ===== */
         .header {
-            width: 100%;
+            width: var(--chat-width);
+            max-width: 100%;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: var(--white);
             padding: 10px 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border-radius: 0 0 var(--radius) var(--radius);
             z-index: 10;
             transition: background 0.3s;
         }
@@ -108,8 +110,6 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            max-width: 700px;
-            margin: 0 auto;
         }
         .header-left h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: 0.5px; color: #fff; }
         .header-left p { font-size: 0.75rem; opacity: 0.8; margin-top: 1px; color: #fff; }
